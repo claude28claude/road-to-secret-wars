@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Road to Secret Wars — Battleworld, the Domes, and Everything After Doomsday</title>
+<meta name="description" content="Part II of the road. Fan-made guide to the 364 days between Avengers: Doomsday (Dec 18, 2026) and Avengers: Secret Wars (Dec 17, 2027) — every announced Marvel project, all 41 domes of Battleworld, and what comes after.">
+<style>
+  :root{
+    --bg:#05080a;
+    --bg-soft:#0a1012;
+    --card:#0c1316;
+    --card-edge:#1b2a2b;
+    --card-edge-hot:#2c4744;
+    --ink:#e7efee;
+    --ink-dim:#96a8a6;
+    --ink-faint:#5c6d6c;
+    --green:#35d07f;
+    --green-glow:rgba(53,208,127,.42);
+    --gold:#e8b84b;
+    --gold-glow:rgba(232,184,75,.4);
+    --crimson:#d7263d;
+    --steel:#7d8b99;
+    --violet:#a98cf0;
+    --mono:'Cascadia Code','Consolas',ui-monospace,monospace;
+    --serif:Georgia,'Times New Roman',serif;
+    --sans:'Segoe UI',system-ui,-apple-system,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.6;
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  a{color:var(--green);text-decoration-color:rgba(53,208,127,.35)}
+
+  /* ===== Emblem background ===== */
+  #emblem{
+    position:fixed;
+    top:-1vh;left:50%;transform:translateX(-50%);
+    width:min(102vh,110vw);height:auto;
+    z-index:0;pointer-events:none;
+    opacity:1;
+    -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 44%,rgba(0,0,0,.55) 66%,transparent 90%);
+            mask-image:linear-gradient(180deg,#000 0%,#000 44%,rgba(0,0,0,.55) 66%,transparent 90%);
+  }
+  #glowlayer{
+    position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(ellipse 72% 46% at 50% 4%, rgba(53,208,127,.20), transparent 72%),
+      radial-gradient(ellipse 90% 60% at 50% 105%, rgba(215,38,61,.07), transparent 70%);
+  }
+  /* darkens the middle so the hero copy stays readable, leaves the mask's edges lit */
+  #vignette{
+    position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:
+      radial-gradient(ellipse 52% 26% at 50% 30%, rgba(5,8,10,.70), rgba(5,8,10,0) 80%),
+      linear-gradient(180deg, rgba(5,8,10,.18) 0%, rgba(5,8,10,.26) 30%, rgba(5,8,10,.78) 58%, rgba(5,8,10,.98) 76%, var(--bg) 88%);
+  }
+  .page{position:relative;z-index:2}
+
+  /* ===== Top bar ===== */
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:18px 24px;max-width:1080px;margin:0 auto;
+    font-family:var(--mono);font-size:12px;letter-spacing:.25em;
+    color:var(--ink-faint);text-transform:uppercase;flex-wrap:wrap;
+  }
+  .topbar .pill{
+    border:1px solid var(--card-edge);border-radius:99px;padding:8px 18px;
+    color:var(--ink-dim);letter-spacing:.1em;background:rgba(53,208,127,.05);
+  }
+
+  /* ===== Hero ===== */
+  .hero{max-width:860px;margin:0 auto;padding:22px 24px 10px;text-align:center}
+  .mark{width:clamp(86px,13vw,124px);height:auto;display:block;margin:0 auto 18px;
+    filter:drop-shadow(0 0 10px rgba(232,184,75,.55)) drop-shadow(0 0 32px rgba(232,184,75,.3))}
+  .eyebrow{
+    font-family:var(--mono);font-size:12.5px;letter-spacing:.45em;
+    color:var(--green);text-transform:uppercase;margin-bottom:18px;
+  }
+  h1{
+    font-family:var(--serif);font-weight:700;
+    font-size:clamp(30px,10.5vw,92px);line-height:1.02;letter-spacing:.01em;
+  }
+  h1 .white{color:#f2f7f6;text-shadow:0 0 40px rgba(255,255,255,.18),0 4px 30px rgba(5,8,10,.9)}
+  h1 .glow{color:var(--gold);text-shadow:0 0 28px var(--gold-glow),0 0 90px var(--gold-glow),0 4px 30px rgba(5,8,10,.85)}
+  .tagline{margin:24px auto 0;max-width:660px;font-size:18.5px;color:var(--ink-dim);
+    text-shadow:0 2px 18px rgba(5,8,10,.95),0 0 34px rgba(5,8,10,.8)}
+  .tagline b{color:var(--ink)}
+
+  /* prequel banner */
+  .prequel{
+    max-width:700px;margin:26px auto 0;
+    border:1px solid var(--card-edge);border-left:3px solid var(--green);
+    background:rgba(53,208,127,.05);border-radius:12px;
+    padding:14px 20px;text-align:left;font-size:14.5px;color:var(--ink-dim);
+  }
+  .prequel b{font-family:var(--mono);font-size:11px;letter-spacing:.26em;color:var(--green);
+    display:block;text-transform:uppercase;margin-bottom:4px}
+
+  /* ===== Countdown ===== */
+  .cd-switch{display:flex;justify-content:center;gap:8px;margin:34px 0 16px;flex-wrap:wrap}
+  .cd-switch button{
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;
+    background:transparent;border:1px solid var(--card-edge);color:var(--ink-faint);
+    border-radius:99px;padding:8px 18px;cursor:pointer;transition:.15s;
+  }
+  .cd-switch button.on{border-color:var(--gold);color:var(--gold);background:rgba(232,184,75,.08)}
+  .countdown{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+  .tile{
+    background:linear-gradient(180deg,rgba(53,208,127,.08),rgba(53,208,127,.015));
+    border:1px solid var(--card-edge);border-radius:14px;
+    min-width:94px;padding:16px 10px 12px;backdrop-filter:blur(2px);
+  }
+  .tile b{font-family:var(--serif);font-size:42px;color:var(--gold);display:block;line-height:1;
+    text-shadow:0 0 26px var(--gold-glow)}
+  .tile span{font-family:var(--mono);font-size:10.5px;letter-spacing:.3em;color:var(--ink-faint);text-transform:uppercase}
+  .premiere{
+    margin-top:18px;
+    font-family:var(--mono);font-size:13.5px;letter-spacing:.2em;color:var(--ink-dim);text-transform:uppercase;
+  }
+  .premiere em{color:var(--gold);font-style:normal}
+  .gapnote{margin-top:8px;font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;color:var(--ink-faint);text-transform:uppercase}
+
+  /* ===== Nav ===== */
+  .jump{
+    max-width:1080px;margin:40px auto 0;padding:0 24px;
+    display:flex;gap:8px;justify-content:center;flex-wrap:wrap;
+  }
+  .jump a{
+    font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    border:1px solid var(--card-edge);border-radius:99px;padding:7px 15px;
+    color:var(--ink-faint);text-decoration:none;transition:.15s;
+  }
+  .jump a:hover{border-color:var(--green);color:var(--green)}
+
+  /* ===== Dashboard ===== */
+  .dash{max-width:900px;margin:26px auto 0;padding:0 24px}
+  .dash-card{
+    background:var(--card);border:1px solid var(--card-edge);border-radius:18px;
+    padding:22px 26px;display:flex;flex-wrap:wrap;gap:18px 30px;align-items:center;justify-content:space-between;
+  }
+  .stat b{font-family:var(--serif);font-size:29px;color:var(--ink)}
+  .stat span{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.25em;color:var(--ink-faint);text-transform:uppercase;margin-top:2px}
+  .bar{flex:1 1 100%;height:8px;border-radius:99px;background:#101b1d;overflow:hidden}
+  .bar i{display:block;height:100%;width:0%;border-radius:99px;
+    background:linear-gradient(90deg,var(--green),var(--gold));transition:width .4s}
+  .dash-actions{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{
+    font-family:var(--mono);font-size:12px;letter-spacing:.08em;cursor:pointer;
+    background:rgba(53,208,127,.07);border:1px solid var(--card-edge);color:var(--ink-dim);
+    border-radius:99px;padding:8px 16px;transition:.15s;
+  }
+  .btn:hover{border-color:var(--green);color:var(--ink)}
+  .btn.danger:hover{border-color:var(--crimson);color:var(--crimson)}
+  .upnext{font-size:15px;color:var(--ink-dim)}
+  .upnext b{color:var(--gold);font-family:var(--serif);font-size:17px}
+
+  /* ===== Sections ===== */
+  .wrap{max-width:900px;margin:0 auto;padding:0 24px}
+  .part{margin-top:74px}
+  .part-head{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--card-edge);padding-bottom:14px;margin-bottom:20px}
+  .roman{
+    font-family:var(--serif);font-size:34px;color:var(--green);
+    text-shadow:0 0 20px var(--green-glow);min-width:44px;
+  }
+  .part-title{flex:1;min-width:220px}
+  .part-title h2{font-family:var(--mono);font-size:16px;letter-spacing:.28em;text-transform:uppercase;color:var(--ink)}
+  .part-title p{font-size:14px;color:var(--ink-faint);margin-top:4px}
+  .part-count{font-family:var(--mono);font-size:14px;color:var(--ink-dim)}
+  .mark-all{display:block;margin:0 0 14px auto}
+
+  /* ===== Item cards ===== */
+  .item{
+    background:var(--card);border:1px solid var(--card-edge);border-radius:16px;
+    padding:18px 20px;margin-bottom:12px;cursor:pointer;position:relative;
+    transition:border-color .15s, opacity .2s;
+  }
+  .item:hover{border-color:var(--card-edge-hot)}
+  .item .row{display:flex;gap:16px;align-items:flex-start}
+  .num{
+    flex:0 0 auto;width:38px;height:38px;border-radius:50%;
+    border:1.5px solid var(--card-edge);display:flex;align-items:center;justify-content:center;
+    font-family:var(--serif);font-size:17px;color:var(--ink-dim);transition:.15s;margin-top:2px;
+  }
+  .body{flex:1;min-width:0}
+  .title-line{font-family:var(--serif);font-size:20px;color:var(--ink);line-height:1.3}
+  .meta{font-family:var(--mono);font-size:12.5px;color:var(--ink-faint);margin-top:3px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  .badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .badge{
+    font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+    border-radius:5px;padding:3px 9px;border:1px solid;white-space:nowrap;
+  }
+  .b-core{color:var(--gold);border-color:rgba(232,184,75,.45);background:rgba(232,184,75,.08)}
+  .b-opt{color:var(--ink-faint);border-color:var(--card-edge)}
+  .b-gate{color:var(--crimson);border-color:rgba(215,38,61,.5);background:rgba(215,38,61,.08)}
+  .b-conf{color:var(--green);border-color:rgba(53,208,127,.4);background:rgba(53,208,127,.07)}
+  .b-undated{color:var(--steel);border-color:rgba(125,139,153,.4)}
+  .b-rumor{color:var(--violet);border-color:rgba(169,140,240,.4);background:rgba(169,140,240,.06)}
+  .note{font-size:14.5px;color:var(--ink-dim);margin-top:9px}
+  .note strong{color:var(--gold)}
+  details{margin-top:10px}
+  details summary{
+    font-family:var(--mono);font-size:12px;color:var(--ink-faint);cursor:pointer;
+    list-style:none;display:inline-block;margin-right:18px;padding:4px 0;
+  }
+  details summary::-webkit-details-marker{display:none}
+  details summary:hover, details[open] summary{color:var(--green)}
+  details p{font-size:14px;color:var(--ink-dim);padding:8px 12px;border-left:2px solid var(--card-edge);margin-top:4px}
+  .details-row{display:flex;flex-wrap:wrap}
+
+  .item.watched{opacity:.42;border-color:rgba(53,208,127,.25)}
+  .item.watched .num{border-color:var(--green);color:var(--green);background:rgba(53,208,127,.1)}
+  .item.watched .num::before{content:"✓";font-size:16px}
+  .item.watched .num span{display:none}
+  .item.watched .title-line{text-decoration:line-through;text-decoration-color:rgba(150,168,166,.6);text-decoration-thickness:1px}
+  body.hide-watched .item.watched{display:none}
+
+  .stop{
+    border:1px solid rgba(215,38,61,.4);background:rgba(215,38,61,.06);
+    border-radius:14px;padding:14px 18px;margin:4px 0 14px 54px;font-size:14px;color:var(--ink-dim);
+  }
+  .stop b{font-family:var(--mono);font-size:12px;letter-spacing:.25em;color:var(--crimson);display:block;margin-bottom:4px}
+
+  /* ===== Domes ===== */
+  .dome-controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;align-items:center}
+  .dome-controls .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-faint);margin-right:4px}
+  .filt{
+    font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;
+    background:transparent;border:1px solid var(--card-edge);color:var(--ink-faint);
+    border-radius:99px;padding:6px 14px;transition:.15s;
+  }
+  .filt.on{border-color:var(--green);color:var(--green);background:rgba(53,208,127,.07)}
+
+  .domegrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px}
+  .dome{
+    background:var(--card);border:1px solid var(--card-edge);border-radius:16px;
+    padding:0;overflow:hidden;position:relative;transition:border-color .15s,opacity .2s;
+    display:flex;flex-direction:column;
+  }
+  .dome:hover{border-color:var(--card-edge-hot)}
+  .dome-top{
+    padding:16px 18px 12px;cursor:pointer;position:relative;
+    background:linear-gradient(180deg,rgba(53,208,127,.045),transparent);
+  }
+  .dome-n{
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.28em;color:var(--ink-faint);
+    display:flex;justify-content:space-between;align-items:center;gap:10px;
+  }
+  .dome-name{font-family:var(--serif);font-size:22px;color:var(--ink);line-height:1.2;margin-top:6px}
+  .dome-alt{font-family:var(--mono);font-size:11px;color:var(--ink-faint);margin-top:2px}
+  .dome-baron{
+    font-size:13.5px;color:var(--gold);margin-top:9px;
+  }
+  .dome-baron span{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);display:block}
+  .dome-body{padding:0 18px 16px}
+  .dome-what{font-size:14.5px;color:var(--ink-dim);margin-top:12px}
+  .dome-mcu{
+    font-size:14px;color:var(--ink-dim);margin-top:12px;
+    border-left:2px solid var(--card-edge);padding:6px 0 6px 12px;
+  }
+  .dome-mcu b{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--green);display:block;margin-bottom:3px}
+  .dome-watch{
+    margin-top:12px;font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);line-height:1.8;
+  }
+  .dome-watch b{color:var(--ink-dim);letter-spacing:.18em;text-transform:uppercase;font-size:10px;display:block}
+  .dome-check{
+    margin-top:auto;border-top:1px solid var(--card-edge);
+    font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink-faint);padding:11px 18px;cursor:pointer;transition:.15s;background:transparent;
+    text-align:left;width:100%;
+  }
+  .dome-check:hover{color:var(--green);background:rgba(53,208,127,.04)}
+  .dome.briefed{border-color:rgba(53,208,127,.35)}
+  .dome.briefed .dome-check{color:var(--green);background:rgba(53,208,127,.06)}
+  .dome.briefed .dome-check::before{content:"✓ "}
+  .dome.hidden{display:none}
+  .t-locked .dome-top{background:linear-gradient(180deg,rgba(215,38,61,.09),transparent)}
+  .t-wild .dome-top{background:linear-gradient(180deg,rgba(169,140,240,.06),transparent)}
+
+  .deepcuts{
+    margin-top:18px;border:1px dashed var(--card-edge);border-radius:16px;padding:18px 20px;
+    background:rgba(12,19,22,.6);
+  }
+  .deepcuts h3{font-family:var(--mono);font-size:12px;letter-spacing:.26em;text-transform:uppercase;color:var(--ink-dim)}
+  .deepcuts p{font-size:14px;color:var(--ink-faint);margin-top:8px}
+  .deepcuts .names{margin-top:12px;display:flex;flex-wrap:wrap;gap:7px}
+  .deepcuts .names span{
+    font-family:var(--mono);font-size:11px;color:var(--ink-dim);
+    border:1px solid var(--card-edge);border-radius:6px;padding:4px 9px;
+  }
+
+  /* ===== Law cards ===== */
+  .laws{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+  .law{
+    background:var(--card);border:1px solid var(--card-edge);border-radius:16px;padding:18px 20px;
+  }
+  .law h3{font-family:var(--serif);font-size:19px;color:var(--gold);line-height:1.25}
+  .law .k{font-family:var(--mono);font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--ink-faint)}
+  .law p{font-size:14.5px;color:var(--ink-dim);margin-top:9px}
+
+  /* ===== Destination ===== */
+  .destination{
+    margin-top:74px;text-align:center;border:1px solid rgba(232,184,75,.35);
+    background:linear-gradient(180deg,rgba(232,184,75,.08),rgba(53,208,127,.04));
+    border-radius:22px;padding:44px 28px;
+  }
+  .destination .eyebrow{color:var(--gold);margin-bottom:10px}
+  .destination h2{font-family:var(--serif);font-size:clamp(32px,6vw,54px);color:#f2f7f6;line-height:1.1}
+  .destination h2 em{color:var(--gold);font-style:normal;text-shadow:0 0 30px var(--gold-glow)}
+  .destination p{color:var(--ink-dim);max-width:600px;margin:14px auto 0;font-size:15.5px}
+  .facts{
+    margin:26px auto 0;max-width:620px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;text-align:left;
+  }
+  .facts div{border:1px solid var(--card-edge);border-radius:12px;padding:11px 14px;background:rgba(5,8,10,.4)}
+  .facts b{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-faint)}
+  .facts span{font-size:14.5px;color:var(--ink)}
+
+  /* ===== Next / Phase 7 ===== */
+  .nextgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+  .nx{background:var(--card);border:1px solid var(--card-edge);border-radius:16px;padding:18px 20px}
+  .nx .when{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--green)}
+  .nx h3{font-family:var(--serif);font-size:20px;color:var(--ink);margin-top:5px;line-height:1.25}
+  .nx p{font-size:14.5px;color:var(--ink-dim);margin-top:9px}
+  .nx .badges{margin-top:10px}
+
+  /* ===== Sources / footer ===== */
+  .sources{margin-top:70px;border-top:1px solid var(--card-edge);padding-top:22px}
+  .sources h3{font-family:var(--mono);font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--ink-faint)}
+  .sources ul{list-style:none;margin-top:10px;display:flex;flex-wrap:wrap;gap:8px 18px}
+  .sources li{font-size:13px}
+  footer{
+    text-align:center;padding:34px 24px 60px;font-family:var(--mono);
+    font-size:11.5px;letter-spacing:.12em;color:var(--ink-faint);line-height:2;
+  }
+
+  @media (max-width:560px){
+    .stop{margin-left:0}
+    .tile{min-width:74px;padding:13px 8px 10px}
+    .tile b{font-size:32px}
+    #emblem{opacity:.4}
+    .domegrid,.laws,.nextgrid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ BACKGROUND EMBLEM: Doom's mask + the Avengers A ============ -->
+<svg id="emblem" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <defs>
+    <linearGradient id="steelG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#8fb3a6"/>
+      <stop offset="38%"  stop-color="#3b5450"/>
+      <stop offset="62%"  stop-color="#5a8074"/>
+      <stop offset="100%" stop-color="#182624"/>
+    </linearGradient>
+    <linearGradient id="plateG" x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop offset="0%"   stop-color="#b6cec2"/>
+      <stop offset="30%"  stop-color="#4d6a61"/>
+      <stop offset="55%"  stop-color="#87ab9f"/>
+      <stop offset="80%"  stop-color="#31453d"/>
+      <stop offset="100%" stop-color="#131d1a"/>
+    </linearGradient>
+    <linearGradient id="goldG" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0%"   stop-color="#fbe9a8"/>
+      <stop offset="26%"  stop-color="#e8b84b"/>
+      <stop offset="58%"  stop-color="#b8862a"/>
+      <stop offset="80%"  stop-color="#f0cd6e"/>
+      <stop offset="100%" stop-color="#8a5f17"/>
+    </linearGradient>
+    <radialGradient id="eyeG" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%"   stop-color="#9dffcd"/>
+      <stop offset="45%"  stop-color="#35d07f"/>
+      <stop offset="100%" stop-color="#0b3d26"/>
+    </radialGradient>
+    <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="9" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="hardGlow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="16" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- ===== Doom's mask: a ghost plate behind the emblem ===== -->
+  <g transform="translate(100,58)" opacity=".5">
+
+  <!-- ---- hood / cowl ---- -->
+  <path d="M400 40
+           C258 40 168 126 162 262
+           C156 402 196 566 264 700
+           C310 792 356 848 400 848
+           C444 848 490 792 536 700
+           C604 566 644 402 638 262
+           C632 126 542 40 400 40 Z"
+        fill="url(#steelG)" opacity=".85"/>
+
+  <!-- ---- faceplate ---- -->
+  <path d="M400 86
+           C282 86 208 156 203 268
+           C198 392 232 538 292 656
+           C332 736 370 786 400 786
+           C430 786 468 736 508 656
+           C568 538 602 392 597 268
+           C592 156 518 86 400 86 Z"
+        fill="url(#plateG)" opacity=".95"/>
+
+  <!-- ---- brow band ---- -->
+  <path d="M206 244 C280 214 520 214 594 244 L594 286 C520 258 280 258 206 286 Z"
+        fill="url(#goldG)" opacity=".78"/>
+
+  <!-- ---- rivets along the rim ---- -->
+  <g fill="#dceae4" opacity=".42">
+    <circle cx="222" cy="330" r="7"/><circle cx="232" cy="410" r="7"/>
+    <circle cx="248" cy="490" r="7"/><circle cx="270" cy="568" r="7"/>
+    <circle cx="300" cy="644" r="7"/><circle cx="336" cy="712" r="7"/>
+    <circle cx="578" cy="330" r="7"/><circle cx="568" cy="410" r="7"/>
+    <circle cx="552" cy="490" r="7"/><circle cx="530" cy="568" r="7"/>
+    <circle cx="500" cy="644" r="7"/><circle cx="464" cy="712" r="7"/>
+  </g>
+
+  <!-- ---- eye slits ---- -->
+  <g filter="url(#softGlow)">
+    <path d="M244 348 L364 322 L372 384 L252 402 Z" fill="url(#eyeG)" opacity=".85"/>
+    <path d="M556 348 L436 322 L428 384 L548 402 Z" fill="url(#eyeG)" opacity=".85"/>
+  </g>
+  <path d="M244 348 L364 322 L372 384 L252 402 Z" fill="none" stroke="#0a1512" stroke-width="6" opacity=".5"/>
+  <path d="M556 348 L436 322 L428 384 L548 402 Z" fill="none" stroke="#0a1512" stroke-width="6" opacity=".5"/>
+
+  <!-- ---- nose ridge ---- -->
+  <path d="M400 336 L386 470 L414 470 Z" fill="#0e1a17" opacity=".6"/>
+
+  <!-- ---- mouth grille ---- -->
+  <g opacity=".85">
+    <rect x="306" y="516" width="188" height="112" rx="26" fill="#0b1412"/>
+    <g fill="url(#goldG)" opacity=".7">
+      <rect x="322" y="530" width="14" height="84" rx="6"/>
+      <rect x="356" y="530" width="14" height="84" rx="6"/>
+      <rect x="390" y="530" width="14" height="84" rx="6"/>
+      <rect x="424" y="530" width="14" height="84" rx="6"/>
+      <rect x="458" y="530" width="14" height="84" rx="6"/>
+    </g>
+    <rect x="306" y="516" width="188" height="112" rx="26" fill="none" stroke="url(#goldG)" stroke-width="5"/>
+  </g>
+
+  <!-- ---- seam ---- -->
+  <path d="M400 96 L400 250" stroke="#c9d8d2" stroke-width="3" opacity=".16"/>
+
+  </g><!-- /mask -->
+
+  <!-- ============ THE AVENGERS "A", ghosted into the plate ============ -->
+  <g transform="translate(500,540) scale(2.32) translate(-123,-96)" filter="url(#hardGlow)" opacity=".3">
+    <path d="M100 18 A 87 87 0 1 1 99.9 18" fill="none" stroke="url(#goldG)" stroke-width="11"
+          stroke-dasharray="330 34 130 52" stroke-linecap="butt"/>
+    <path d="M50 182 L104 40"  stroke="url(#goldG)" stroke-width="17" stroke-linecap="butt" fill="none"/>
+    <path d="M146 186 L96 12"  stroke="url(#goldG)" stroke-width="17" stroke-linecap="butt" fill="none"/>
+    <path d="M96 6 L112 52 L96 42 L80 52 Z" fill="url(#goldG)"/>
+    <path d="M70 138 L204 138" stroke="url(#goldG)" stroke-width="15" stroke-linecap="butt" fill="none"/>
+  </g>
+</svg>
+<div id="glowlayer"></div>
+<div id="vignette"></div>
+
+<div class="page">
+
+<div class="topbar">
+  <span>Fan-Made Guide · Part II</span>
+  <span class="pill">Doomsday → Battleworld → Secret Wars</span>
+</div>
+
+<header class="hero">
+  <!-- crisp foreground emblem: the Avengers A over Doom's plate -->
+  <svg class="mark" viewBox="0 0 240 210" xmlns="http://www.w3.org/2000/svg" aria-label="Avengers Doomsday emblem">
+    <defs>
+      <linearGradient id="mGold" x1="0" y1="0" x2="0.35" y2="1">
+        <stop offset="0%"   stop-color="#fdf0bd"/>
+        <stop offset="24%"  stop-color="#f0c65c"/>
+        <stop offset="52%"  stop-color="#b8862a"/>
+        <stop offset="76%"  stop-color="#f6d987"/>
+        <stop offset="100%" stop-color="#8a5f17"/>
+      </linearGradient>
+    </defs>
+    <g transform="translate(120,105) scale(0.93) translate(-123,-96)">
+      <path d="M100 18 A 87 87 0 1 1 99.9 18" fill="none" stroke="url(#mGold)" stroke-width="11"
+            stroke-dasharray="330 34 130 52" stroke-linecap="butt"/>
+      <path d="M50 182 L104 40"  stroke="url(#mGold)" stroke-width="17" stroke-linecap="butt" fill="none"/>
+      <path d="M146 186 L96 12"  stroke="url(#mGold)" stroke-width="17" stroke-linecap="butt" fill="none"/>
+      <path d="M96 6 L112 52 L96 42 L80 52 Z" fill="url(#mGold)"/>
+      <path d="M70 138 L204 138" stroke="url(#mGold)" stroke-width="15" stroke-linecap="butt" fill="none"/>
+    </g>
+  </svg>
+  <div class="eyebrow">Everything After Doomsday</div>
+  <h1><span class="white">ROAD TO</span><br><span class="glow">SECRET WARS</span></h1>
+  <p class="tagline">The road doesn’t end on December 18, 2026 — it ends on a stitched-together planet ruled by a god in a green cloak. This is the <b>364 days in between</b>: every announced Marvel project, all <b>41 domes of Battleworld</b>, the laws that hold them together, and what waits on the other side.</p>
+
+  <div class="prequel">
+    <b>Continues from</b>
+    This is an add-on to <a href="https://roadtodoomsday.com" target="_blank" rel="noopener">roadtodoomsday.com</a>, which walks you through all 71 stops from <em>Iron Man</em> (2008) to <em>Avengers: Doomsday</em>. Finish that road first. This one picks up where it stops — at the gate.
+  </div>
+
+  <div class="cd-switch">
+    <button id="sw-dd" class="on">To Doomsday</button>
+    <button id="sw-sw">To Secret Wars</button>
+  </div>
+  <div class="countdown" id="countdown">
+    <div class="tile"><b id="cd-days">–</b><span>Days</span></div>
+    <div class="tile"><b id="cd-hours">–</b><span>Hours</span></div>
+    <div class="tile"><b id="cd-mins">–</b><span>Mins</span></div>
+    <div class="tile"><b id="cd-secs">–</b><span>Secs</span></div>
+  </div>
+  <div class="premiere" id="premiere-line">Avengers: Doomsday premieres <em>Dec 18, 2026</em></div>
+  <div class="gapnote">364 days separate the two films · no other Marvel Studios movie sits between them</div>
+</header>
+
+<nav class="jump">
+  <a href="#p1">The Last Mile</a>
+  <a href="#p2">The Interregnum</a>
+  <a href="#domes">The 41 Domes</a>
+  <a href="#laws">Laws of Battleworld</a>
+  <a href="#dest">Secret Wars</a>
+  <a href="#next">What Comes Next</a>
+</nav>
+
+<section class="dash">
+  <div class="dash-card">
+    <div class="stat"><b id="pct">0%</b><span>Road complete</span></div>
+    <div class="stat"><b id="done-count">0/0</b><span>Checked off</span></div>
+    <div class="stat"><b id="dome-count">0/22</b><span>Domes briefed</span></div>
+    <div class="upnext">Up next: <b id="upnext">—</b></div>
+    <div class="bar"><i id="bar-fill"></i></div>
+    <div class="dash-actions">
+      <button class="btn" id="toggle-watched">Hide watched</button>
+      <button class="btn" id="share-btn">Share</button>
+      <button class="btn danger" id="reset-btn">Reset progress</button>
+    </div>
+  </div>
+</section>
+
+<main class="wrap">
+  <div id="roadmap"></div>
+
+  <!-- ============ DOMES ============ -->
+  <section class="part" id="domes">
+    <div class="part-head">
+      <div class="roman">III</div>
+      <div class="part-title">
+        <h2>The Domes of Battleworld</h2>
+        <p>One planet. Forty-one domains, each cut from a universe that died. Twenty-two that matter most, in detail.</p>
+      </div>
+      <div class="part-count" id="dome-visible">22 shown</div>
+    </div>
+
+    <p class="note" style="margin:0 0 18px">Battleworld is not a place Doom found — it is a place he <strong>built</strong>. When the multiverse collapses, Doom salvages the pieces he wants and welds them into a single world, then writes himself in as its god. Every dome is a slice of a dead reality with its own laws, its own ruler, and no memory that anything else ever existed. Crossing between them without Doom’s leave is a capital crime. <em>Nothing below is confirmed MCU plot</em> — the domes are drawn from the 2015 <em>Secret Wars</em> comic, and the MCU column is the case for each one, graded honestly.</p>
+
+    <div class="dome-controls">
+      <span class="lbl">Filter</span>
+      <button class="filt on" data-tier="all">All 22</button>
+      <button class="filt" data-tier="locked">Locked in</button>
+      <button class="filt" data-tier="strong">Strong case</button>
+      <button class="filt" data-tier="wild">Wildcard</button>
+      <button class="filt" data-tier="unbriefed">Not yet briefed</button>
+    </div>
+
+    <div class="domegrid" id="domegrid"></div>
+
+    <div class="deepcuts">
+      <h3>The rest of the map</h3>
+      <p>The 2015 comic mapped 41 domains in total. These nineteen are the deep cuts — smaller, stranger, and mostly there to prove the planet is bigger than any one story. Marvel could pull any of them out of the drawer for a single shot.</p>
+      <div class="names" id="deepnames"></div>
+    </div>
+  </section>
+
+  <!-- ============ LAWS ============ -->
+  <section class="part" id="laws">
+    <div class="part-head">
+      <div class="roman">IV</div>
+      <div class="part-title">
+        <h2>The Laws of Battleworld</h2>
+        <p>How a stitched planet stays stitched — the rules you need to follow the film</p>
+      </div>
+    </div>
+    <div class="laws" id="lawgrid"></div>
+  </section>
+
+  <!-- ============ DESTINATION ============ -->
+  <section class="destination" id="dest">
+    <div class="eyebrow">The Destination</div>
+    <h2><em>Avengers: Secret Wars</em></h2>
+    <p><b>In theaters December 17, 2027.</b> The fortieth film in the Marvel Cinematic Universe, the last of Phase Six, and the end of the Multiverse Saga that began with <em>WandaVision</em> in January 2021. Everything on both roads — 71 stops on the first, everything on this one — resolves here.</p>
+    <div class="facts">
+      <div><b>Release</b><span>Dec 17, 2027</span></div>
+      <div><b>Directors</b><span>Anthony &amp; Joe Russo</span></div>
+      <div><b>Doom</b><span>Robert Downey Jr.</span></div>
+      <div><b>Phase</b><span>Six — final film</span></div>
+      <div><b>MCU film no.</b><span>40</span></div>
+      <div><b>Saga</b><span>The Multiverse Saga</span></div>
+    </div>
+    <p style="margin-top:24px;font-size:14.5px">The Russos have said <em>Doomsday</em> and <em>Secret Wars</em> were built to work together — but deliberately <em>not</em> the way <em>Infinity War</em> and <em>Endgame</em> did. They have also pointedly refused to rule Battleworld in or out. Read that however you like.</p>
+  </section>
+
+  <!-- ============ NEXT ============ -->
+  <section class="part" id="next">
+    <div class="part-head">
+      <div class="roman">V</div>
+      <div class="part-title">
+        <h2>And Secret Wars to Its Next</h2>
+        <p>Phase 7 — what Marvel has actually announced for the far side of Battleworld</p>
+      </div>
+    </div>
+    <p class="note" style="margin:0 0 18px">Whatever survives Battleworld becomes the new Marvel Universe. Marvel has been unusually open about the shape of the next era: it is a <strong>mutant era</strong>. Here is what is on the board, tagged by how solid it actually is.</p>
+    <div class="nextgrid" id="nextgrid"></div>
+  </section>
+
+  <section class="sources">
+    <h3>Where this comes from</h3>
+    <ul>
+      <li><a href="https://www.marvel.com/movies/avengers-secret-wars" target="_blank" rel="noopener">Marvel.com — Avengers: Secret Wars</a></li>
+      <li><a href="https://www.marvel.com/movies/avengers-doomsday" target="_blank" rel="noopener">Marvel.com — Avengers: Doomsday</a></li>
+      <li><a href="https://variety.com/2025/film/news/avengers-delayed-doomsday-secret-wars-december-2-22910/" target="_blank" rel="noopener">Variety — Doomsday &amp; Secret Wars moved to December 2026 / 2027</a></li>
+      <li><a href="https://www.murphysmultiverse.com/marvel-studios-settles-its-2027-theatrical-slate/" target="_blank" rel="noopener">Murphy’s Multiverse — Marvel’s 2027 theatrical slate</a></li>
+      <li><a href="https://thedirect.com/article/marvel-studios-disney-plus-2027-slate" target="_blank" rel="noopener">The Direct — Marvel’s 2027 Disney+ slate</a></li>
+      <li><a href="https://thedirect.com/article/marvel-studios-mcu-phase-7-release-schedule-2028-2029" target="_blank" rel="noopener">The Direct — Phase 7 release schedule</a></li>
+      <li><a href="https://marvel.fandom.com/wiki/Battleworld_(Latverion)" target="_blank" rel="noopener">Marvel Database — Battleworld (Latverion) &amp; its 41 domains</a></li>
+      <li><a href="https://roadtodoomsday.com" target="_blank" rel="noopener">roadtodoomsday.com — Part I of the road</a></li>
+    </ul>
+  </section>
+</main>
+
+<footer>
+  FAN-MADE GUIDE · NOT AFFILIATED WITH MARVEL STUDIOS OR THE WALT DISNEY COMPANY<br>
+  DOME DOSSIERS ARE DRAWN FROM THE 2015 <em>SECRET WARS</em> COMIC · MCU CONNECTIONS ARE ANALYSIS, NOT LEAKS<br>
+  RELEASE DATES ARE MARVEL’S ANNOUNCED DATES AND MOVE OFTEN · PROGRESS IS STORED ONLY ON THIS DEVICE
+</footer>
+
+</div><!-- /.page -->
+
+<script>
+/* =====================================================================
+   PART I & II — the checkable road
+   type: 'item' | 'stop'
+   badge: 'CORE' | 'GATE' | 'CONFIRMED' | 'UNDATED' | 'RUMORED' | 'OPTIONAL'
+   ===================================================================== */
+const PARTS = [
+{
+  roman:'I', title:'The Last Mile', sub:'The three stops still standing between you and the gate',
+  entries:[
+    {type:'item', id:'bnd', title:'Spider-Man: Brand New Day', meta:'In theaters now (~2 hr 24 min)', tag:'🍅 90%', badge:'CORE', mins:144,
+      note:'The penultimate stop on Part I. Hulk, the Punisher and a New Avengers handshake — and the last time the MCU looks like itself before Doom arrives.',
+      watchFor:'Peter operating without the safety net No Way Home took away, and how casually the film treats Hulk and Frank Castle as neighbours. That casualness is the point: this is the sacred timeline at its most settled, right before it stops being one.',
+      tiesIn:'Whatever version of New York gets pulled into Battleworld, this is the version. If a Manhattan dome shows up in Secret Wars, this film is the last footage of the original.'},
+
+    {type:'item', id:'visionquest', title:'VisionQuest', meta:'Disney+ · Oct 16, 2026 (Marvel’s stated date)', badge:'CORE', mins:360,
+      note:'<strong>The single most important stop on this page.</strong> Vision against Ultron, eight weeks before Doomsday — and it has been reported to feed directly into Secret Wars rather than just Doomsday.',
+      watchFor:'Ultron. If Battleworld happens, the dome called Perfection is an endless Ultron drone-world sealed behind the Shield, and it is the only dome the MCU is visibly building hardware for right now.',
+      tiesIn:'Prerequisites: Age of Ultron (31), WandaVision, and Agatha All Along. On the release-order road this is the final stop before Doomsday.'},
+
+    {type:'item', id:'doomsday', title:'Avengers: Doomsday', meta:'In theaters · Dec 18, 2026', badge:'GATE', mins:0,
+      note:'Heroes from three universes on a collision course. Directed by the Russos. Robert Downey Jr. as Victor von Doom. <strong>Everything below this line assumes you have seen it.</strong>',
+      watchFor:'What Doom actually wants. In the comics he does not want to rule the world — he wants to be the only thing holding it together, and to be thanked for it. The difference decides whether Battleworld is a threat or a rescue.',
+      tiesIn:'The Fantastic Four: First Steps ends with Doom. Thunderbolts* ends with the incursion warning. Doomsday is where those two threads knot.'},
+
+    {type:'stop', text:'SPOILER GATE — Everything below is built on what Doomsday leaves behind. If you have not seen it, close the tab and finish roadtodoomsday.com first. The dome dossiers in Part III are comic-book history, not film leaks, but they will still colour how you read the ending.'},
+  ]
+},
+{
+  roman:'II', title:'The Interregnum', sub:'The 364-day gap — every Marvel project announced between the two films',
+  entries:[
+    {type:'item', id:'ddba3', title:'Daredevil: Born Again — Season 3', meta:'Disney+ · March 2027', badge:'CONFIRMED', mins:480,
+      note:'The only Marvel project with a firm date inside the gap. Reported to widen into the old Defenders corner — Mike Colter’s Luke Cage and Finn Jones’ Danny Rand are both said to return.',
+      watchFor:'Whether the street level acknowledges Doomsday at all. Marvel’s New York shows have historically ignored the cosmic tier; a Battleworld cliffhanger would be the loudest possible signal that nothing is off the table.',
+      tiesIn:'If Danny Rand is back, K’un-Lun is back — and K’un-Lun is one of the 41 domes on the Battleworld map.'},
+
+    {type:'item', id:'xm97s3', title:'X-Men ’97 — Season 3', meta:'Disney+ · expected Summer 2027', badge:'UNDATED', mins:500,
+      note:'Renewed ahead of Season 2’s release. Marvel Animation has talked about an annual cadence, which puts Season 3 squarely in the gap — but no date has been announced.',
+      watchFor:'The multiverse hooks. ’97 has been playing with time travel and alternate futures since Season 1, and it is the MCU’s most acclaimed animated property sitting in its own separate continuity.',
+      tiesIn:'Mutopia — the X-Men ’92 dome — is on the Battleworld map. A dome is the cleanest door Marvel has ever had for folding an animated continuity into a live-action film.'},
+
+    {type:'item', id:'anim27', title:'Marvel Animation’s 2027 block', meta:'Disney+ · titles and dates unannounced', badge:'UNDATED', mins:0,
+      note:'Your Friendly Neighborhood Spider-Man, Eyes of Wakanda and Marvel Zombies have all been renewed or continued in some form, but Marvel has not dated any of them inside 2027. Treat this as a placeholder, not a promise.',
+      watchFor:'Marvel Zombies specifically. Season 1 ended on a cliffhanger Marvel has never resolved on screen — and the Deadlands is a dome.',
+      tiesIn:'Every animated continuity Marvel keeps alive is another dome-shaped hole waiting to be filled.'},
+
+    {type:'item', id:'nofilms', title:'No Marvel Studios film in 2027 — except Secret Wars', meta:'Confirmed by Marvel’s theatrical slate', badge:'CONFIRMED', mins:0,
+      note:'<strong>This is the real story of the gap.</strong> Marvel has cleared its 2027 theatrical calendar entirely. Phase Six is four films total — First Steps, Brand New Day, Doomsday, Secret Wars — and nothing is being slotted between the last two.',
+      watchFor:'Nothing. That is the point. Marvel has deliberately built a year of silence so that Doomsday’s ending is the only thing in the audience’s head when Secret Wars opens.',
+      tiesIn:'It also means everything you need for Secret Wars is either already released or in Part I. There is no homework hiding in 2027.'},
+
+    {type:'item', id:'reread', title:'Optional: read Secret Wars (2015)', meta:'Jonathan Hickman & Esad Ribić · 9 issues', badge:'OPTIONAL', mins:180,
+      note:'Not required. But the nine-issue core series is where Battleworld, the domes, God Emperor Doom, Sheriff Strange and the Thor Corps all come from, and Part III of this page is essentially a field guide to it.',
+      watchFor:'Doom’s scar, and what he does about it. The most-quoted beat in modern Marvel is a single question Doom is asked near the end, and the fact that he cannot answer it honestly.',
+      tiesIn:'If Marvel adapts even a third of this, Part III below stops being speculation and becomes a cast list.'},
+  ]
+}
+];
+
+/* =====================================================================
+   PART III — THE DOMES
+   tier: 'locked' | 'strong' | 'wild'
+   ===================================================================== */
+const DOMES = [
+{n:1, id:'doomstadt', tier:'locked', name:'Doomstadt', alt:'Capital of Battleworld · Castle Doom',
+ baron:'God Emperor Doom',
+ what:'The seat of creation. Castle Doom sits at the exact centre of the planet, and every road on Battleworld eventually points at it. Here, Doom’s word is not law — it is physics. He does not enforce reality; he is reality.',
+ mcu:'Robert Downey Jr.’s Doom is the whole architecture of these two films. If Battleworld exists at all, this dome exists. It is the only entry on this page that is effectively guaranteed.',
+ watch:'The Fantastic Four: First Steps · Avengers: Doomsday'},
+
+{n:2, id:'shield', tier:'locked', name:'The Shield', alt:'also called The Wall',
+ baron:'The Thor Corps garrison',
+ what:'A hundred-mile-high wall of stone and steel running the whole southern rim of the planet. Behind it Doom penned the three things he could not kill. Serving on the Shield is a death sentence that Battleworld has agreed to call an honour.',
+ mcu:'Loki already gave the MCU a purge-zone at the end of everything — the Void, patrolled by Alioth. The Shield is that idea with a garrison and a budget, and it gives a two-film story a map with an edge on it.',
+ watch:'Loki S1–S2 · Thor: Ragnarok'},
+
+{n:3, id:'manhattan', tier:'locked', name:'Manhattan', alt:'Marville · the Regency',
+ baron:'Doom’s hand-picked stewards',
+ what:'The dome closest to “normal.” Built from the last surviving slice of the prime reality, it is the only place on Battleworld where the streets look like the ones the audience knows — which makes it the most disorienting dome of all.',
+ mcu:'This is where you, the viewer, stand. The entire 18-year MCU becomes one dome out of forty-one. That demotion is not a side effect of Secret Wars; it is the thesis.',
+ watch:'The whole of Part I — this is what the last 71 stops were building'},
+
+{n:4, id:'perfection', tier:'strong', name:'Perfection', alt:'behind the Shield',
+ baron:'Ultron',
+ what:'A silent, spotless, endlessly self-replicating dome of Ultron drones. There is no population, no economy, no war — just a machine that finished its argument and kept building. Doom walled it off rather than fight it, which tells you what he thinks his odds were.',
+ mcu:'The strongest case on this page. VisionQuest puts Ultron back on the board on October 16, 2026 — eight weeks before Doomsday — and has been reported to feed into Secret Wars rather than the film in front of it. Of every dome here, this is the one Marvel is visibly manufacturing parts for.',
+ watch:'Avengers: Age of Ultron · WandaVision · Agatha All Along · VisionQuest'},
+
+{n:5, id:'deadlands', tier:'strong', name:'The Deadlands', alt:'behind the Shield',
+ baron:'none — the dead do not govern',
+ what:'An endless walking famine of infected heroes, sealed behind the wall. Nothing gets out. Occasionally, at great cost, something gets in. It is the only dome on Battleworld with no ruler, because there is nothing left to rule.',
+ mcu:'Marvel Zombies (2025) already exists as canon-adjacent animation, performed well, and ended on a cliffhanger Marvel has never resolved on screen. A dome is the cleanest way to cash that cheque without committing to a film.',
+ watch:'What If…? S1 ep 5 · Marvel Zombies'},
+
+{n:6, id:'newxandar', tier:'strong', name:'New Xandar', alt:'behind the Shield',
+ baron:'Annihilus',
+ what:'The third thing behind the wall: the Annihilation Wave, contained but never beaten. A whole cosmic invasion reduced to a locked room, because Doom’s solution to an unwinnable war is a door.',
+ mcu:'Xandar was destroyed off-screen by Thanos before Infinity War even started — a loss the MCU has never dramatised. Battleworld is where the MCU gets to un-destroy things it never got to show dying.',
+ watch:'Guardians of the Galaxy · Avengers: Infinity War'},
+
+{n:7, id:'technopolis', tier:'strong', name:'Technopolis', alt:'the armoured city',
+ baron:'Tony Stark',
+ what:'A city under a permanent airborne plague. Take your armour off and you are dead in minutes, so nobody ever does — not to eat, not to sleep, not to be buried. Stark rules it and Rhodes polices it, both of them sealed in metal for life.',
+ mcu:'The Armor Wars project has been on and off Marvel’s slate for years without landing. Technopolis is where that idea finally has somewhere to go — and it puts an Iron Man back on screen without touching Endgame’s ending.',
+ watch:'Iron Man · Iron Man 2 · Avengers: Endgame'},
+
+{n:8, id:'warzone', tier:'strong', name:'The Warzone', alt:'Civil War, permanent',
+ baron:'two — Baron Rogers and Baron Stark, at war',
+ what:'The Civil War that never got a reconciliation. Half the dome flies the shield, half flies the reactor, the border is a trench, and neither side can remember why surrender was ever an option.',
+ mcu:'Steve and Tony’s split is the emotional spine of the Infinity Saga, and Battleworld lets the Russos — the directors of Civil War — re-stage it without resurrecting anyone. If Secret Wars wants one dome to break the audience, this is it.',
+ watch:'Captain America: Civil War · Avengers: Endgame'},
+
+{n:9, id:'wastelands', tier:'strong', name:'The Wastelands', alt:'Old Man Logan country',
+ baron:'none',
+ what:'America fifty years after the villains simply won and then got bored. A blinded, retired Logan hauls cargo across it for people who do not know what he used to be. The quietest dome, and the saddest.',
+ mcu:'Logan is a required stop on Part I. The Fox universe is confirmed on the board for Doomsday, and this is its darkest corner — the one place where a Wolverine can appear without contradicting anything.',
+ watch:'Logan · Deadpool & Wolverine'},
+
+{n:10, id:'westchester', tier:'strong', name:'Westchester', alt:'Years of Future Past',
+ baron:'Julian Kohl',
+ what:'The mansion and the school, intact and immaculate — with internment camps for mutants a short drive outside the fence. A dome built on the gap between what a place says it is and what it permits.',
+ mcu:'Every Fox X-Men actor Marvel has announced for Doomsday belongs to this era. Westchester is the address they all share.',
+ watch:'X-Men · X2 · X-Men: The Last Stand'},
+
+{n:11, id:'sentinel', tier:'strong', name:'Sentinel Territories', alt:'the machine belt',
+ baron:'the machines',
+ what:'No baron, no citizens, no buildings. A killing field of Sentinels laid between the mutant domes so that none of them can reach each other. Doom’s cheapest and most effective border policy.',
+ mcu:'Days of Future Past is on Part I’s X-Men homework pack, and the Sentinel future is the single most recognisable image the Fox films produced.',
+ watch:'X-Men: Days of Future Past'},
+
+{n:12, id:'apocalypse', tier:'strong', name:'Domain of Apocalypse', alt:'Age of Apocalypse',
+ baron:'En Sabah Nur',
+ what:'North America run as an experiment in survival of the fittest, with the experiment’s designer sitting on the throne. Everyone alive here is alive because they were useful this morning.',
+ mcu:'Apocalypse is the Fox era’s biggest unfinished idea — a villain the films never really landed. A dome gives him a second first impression.',
+ watch:'X-Men: Apocalypse · X-Men: Days of Future Past'},
+
+{n:13, id:'monarchyofm', tier:'strong', name:'The Monarchy of M', alt:'House of M',
+ baron:'Magneto',
+ what:'A world where mutants won cleanly and humans are the minority, ruled by the House of Magnus by simple hereditary right. It is not a dystopia from the inside — that is what makes it dangerous.',
+ mcu:'Ian McKellen’s Magneto is on the announced Doomsday roster, and Wanda’s entire arc — WandaVision, Multiverse of Madness — is House of M in everything but the title card.',
+ watch:'WandaVision · Doctor Strange in the Multiverse of Madness · X-Men'},
+
+{n:14, id:'mutopia', tier:'strong', name:'Mutopia', alt:'X-Men ’92',
+ baron:'Charles Xavier',
+ what:'A brighter, louder, primary-coloured mutant world where the ’90s never ended and the team still does a group pose before a fight. Played straight, not as parody — which is exactly why it lands.',
+ mcu:'X-Men ’97 is the most acclaimed thing Marvel has made in years and it is stranded in its own continuity. A dome is a door. This is the single most fan-satisfying dome Marvel could open.',
+ watch:'X-Men ’97 S1–S3'},
+
+{n:15, id:'arcadia', tier:'strong', name:'Arcadia', alt:'home of the A-Force',
+ baron:'She-Hulk',
+ what:'A coastal domain governed entirely by women and defended by the A-Force, patrolled from the sea by a Namora who takes the job seriously. One of the few domes that is genuinely well-run.',
+ mcu:'The A-Force shot in Endgame was a promise the MCU has never paid off. Arcadia is where the bill comes due — and Namora is already confirmed on the Doomsday roster.',
+ watch:'She-Hulk: Attorney at Law · Black Panther: Wakanda Forever · Avengers: Endgame'},
+
+{n:16, id:'greenland', tier:'strong', name:'Greenland', alt:'the Hulk jungle',
+ baron:'King Hulk',
+ what:'A sealed jungle domain populated entirely by Hulks, off-limits to everyone including Doom’s own enforcers. The one dome where Doom’s writ is genuinely thin, and he has decided he can live with that.',
+ mcu:'Brand New Day puts Hulk back on the big screen, Skaar is in play from She-Hulk, and Red Hulk exists after Brave New World. Marvel has quietly assembled a cast for this dome without ever announcing one.',
+ watch:'Thor: Ragnarok · She-Hulk · Captain America: Brave New World · Spider-Man: Brand New Day'},
+
+{n:17, id:'spiderisland', tier:'strong', name:'Spider-Island', alt:'Arachnia · Spider-Land',
+ baron:'the Queen',
+ what:'Manhattan, overrun. Everybody in the dome has the powers, which means nobody does — and the thing that infected them is still down there deciding who gets to keep their mind.',
+ mcu:'No Way Home already assembled three Spider-Men and Brand New Day keeps the door open. Sony’s corner is the most crossover-tested real estate Marvel has.',
+ watch:'Spider-Man: No Way Home · Spider-Man: Brand New Day · the Raimi and Webb films'},
+
+{n:18, id:'agamotto', tier:'strong', name:'The Isle of Agamotto', alt:'seat of the Sheriff',
+ baron:'Doctor Strange, Sheriff of Agamotto',
+ what:'A small island a short flight from Doomstadt. Strange is Doom’s law-keeper and the only man on the planet permitted to remember what came before — a privilege that is really a leash. He keeps survivors hidden in the cellar anyway.',
+ mcu:'Strange is the MCU’s designated multiverse-breaker and the character best positioned to be Doom’s reluctant enforcer. He is also the only one with a plausible reason to still have his memory.',
+ watch:'Doctor Strange · Multiverse of Madness · Spider-Man: No Way Home'},
+
+{n:19, id:'egyptia', tier:'wild', name:'Egyptia', alt:'the god-ruled dynasty',
+ baron:'the pantheon',
+ what:'Egypt as an unbroken dynasty of living gods, where the afterlife is a government department and the rulers walk around in daylight collecting on it.',
+ mcu:'Moon Knight left Khonshu, Marc, Steven and Jake completely unresolved and Marvel has said nothing since. A dome is a low-commitment way to bring all four back at once.',
+ watch:'Moon Knight'},
+
+{n:20, id:'kunlun', tier:'wild', name:'K’un-Lun', alt:'one of the Seven Capital Cities of Heaven',
+ baron:'the Immortal Weapons',
+ what:'A hidden mountain city that only touches the world once a decade, run by champions who fight a tournament to decide whose turn it is. Extremely fond of rules.',
+ mcu:'Shang-Chi already gave the MCU its version — Ta Lo and the Ten Rings — and Danny Rand is reported to return in Born Again Season 3. Two roads, one dome.',
+ watch:'Shang-Chi and the Legend of the Ten Rings · Iron Fist · Daredevil: Born Again S3'},
+
+{n:21, id:'weirdworld', tier:'wild', name:'Weirdworld', alt:'the lost and found',
+ baron:'Morgan le Fay / Arkon',
+ what:'Battleworld’s lost property office. Everything that fell through the cracks of creation — half-finished continents, characters nobody claimed, geography that will not hold still — washes up here.',
+ mcu:'A dome-shaped excuse to put anything on screen for ninety seconds. Ghost Rider, Blade, Werewolf by Night, Man-Thing, the Midnight Sons: all of them fit here and nowhere else.',
+ watch:'Werewolf by Night · Moon Knight · Doctor Strange in the Multiverse of Madness'},
+
+{n:22, id:'barsinister', tier:'wild', name:'Bar Sinister', alt:'the clone domain',
+ baron:'Mister Sinister',
+ what:'A domain populated by nothing but Sinister’s own clones, each one spliced with a different mutant’s genome, all of them agreeing with him. A dome that is really just one man’s ego with a postcode.',
+ mcu:'Sinister has been teased since X-Men: Apocalypse’s stinger in 2016 and never delivered. Ten years of setup and no payoff is exactly the debt Battleworld exists to settle.',
+ watch:'X-Men: Apocalypse (stay for the credits) · Logan'}
+];
+
+const DEEP_CUTS = ['Dystopia','Limbo','2099','The Hydra Empire','Higher Avalon','Doomgard','Utopolis','New Mars',
+ 'The Regency','Valley of Doom','The Far West','Valley of Flame','King James’ England','Hala Field','The City',
+ 'Killville','New Quack City','Marville','Arachnia'];
+
+/* ===================== PART IV — LAWS ===================== */
+const LAWS = [
+{k:'Law I', h:'Doom is God, and everyone agrees',
+ p:'Not metaphorically. Doom rewrote himself into the position, and the rewrite is retroactive — nobody on Battleworld remembers a time when he was not divine. The horror of Battleworld is not that people are oppressed. It is that they are grateful.'},
+{k:'Law II', h:'The barons rule, until they don’t',
+ p:'Each dome has a baron who can wage war, police their population, run their own economy and pass the title to their children. That autonomy has a hard ceiling: Doom can remove, exile or kill any baron at any time, without explanation, and has.'},
+{k:'Law III', h:'The Thor Corps is the police',
+ p:'A Thor drawn from every dome on the planet, all of them worthy, all of them answering to Doom rather than to Asgard. They settle disputes between domes and, when a domain is judged an existential danger, they are authorised to erase it entirely.'},
+{k:'Law IV', h:'Sheriff Strange keeps the law and the secret',
+ p:'Strange holds court in Doomstadt under Doom’s eye. He is the only person permitted to remember the multiverse, which makes him the most powerful man on Battleworld and the loneliest. He uses the privilege to hide people.'},
+{k:'Law V', h:'No dome may touch another',
+ p:'Crossing a border without Doom’s leave is a capital offence, and the geography enforces it — Sentinel belts, oceans, and the machine-lands sit between the domains on purpose. Every dome believes it is the world.'},
+{k:'Law VI', h:'The Shield holds three things back',
+ p:'The Deadlands, Perfection and New Xandar — zombies, Ultron and the Annihilation Wave. Doom could not beat them, so he built a wall and staffed it. The southern rim of the planet is one long admission of failure.'},
+{k:'Law VII', h:'Nothing is allowed to remember',
+ p:'Every population on Battleworld is given a history that starts with Doom. The moment anyone recovers a memory of the world before, they stop being a citizen and become a problem — and problems on Battleworld are handled by the Thor Corps.'},
+{k:'Law VIII', h:'The whole thing runs on one lie',
+ p:'Doom did not save the multiverse alone, and the person who knows it is the person he is most afraid of. Battleworld is stable for exactly as long as that stays unsaid. Every version of this story ends when somebody says it out loud.'}
+];
+
+/* ===================== PART V — WHAT COMES NEXT ===================== */
+const NEXT = [
+{when:'Dec 15, 2028', h:'Black Panther 3', badge:'CONFIRMED',
+ p:'Announced with a hard date. Ryan Coogler returns to close his trilogy, with Letitia Wright and Winston Duke back and David Jonsson joining. Reporting has also placed Denzel Washington in the film. The first post-Secret Wars film with a locked release date.'},
+{when:'2028', h:'Ghost Rider', badge:'CONFIRMED',
+ p:'Ryan Gosling as the Spirit of Vengeance, directed by Shawn Levy and written by Jonathan Tropper. Announced for 2028; the specific date has been reported as one of two summer slots rather than settled. Marvel’s clearest signal that Phase 7 goes darker and weirder.'},
+{when:'Undated', h:'X-Men', badge:'CONFIRMED',
+ p:'The MCU’s first proper X-Men film. Jake Schreier — who made Thunderbolts* — directs, with Michael Lesslie writing. No date announced, but this is the film the entire post-Secret Wars era is reportedly built around. Phase 7 is the Mutant Saga.'},
+{when:'Undated', h:'Blade', badge:'UNDATED',
+ p:'Announced in 2019, rewritten repeatedly, and still without a date or a shooting start. Mahershala Ali remains attached. Genuinely unclear whether it survives to production — include it in your plans at your own risk.'},
+{when:'Unannounced', h:'Spider-Man 5 · Avengers 7', badge:'RUMORED',
+ p:'Neither has been announced. Both are treated as inevitable by essentially everyone, for the obvious commercial reasons. Nothing about cast, crew or date exists yet — this entry is here because its absence from Marvel’s slate is itself notable.'},
+{when:'2028+', h:'Marvel Zombies S2 · X-Men ’97 · the animation slate', badge:'RUMORED',
+ p:'Marvel Animation has become the studio’s most reliable output. X-Men ’97 has an annual cadence and a third season ordered; Marvel Zombies performed well enough that a second season is expected, most likely 2028 or later. Dates unannounced.'}
+];
+
+/* ===================== DATES & STORAGE ===================== */
+const DOOMSDAY    = new Date('2026-12-18T00:00:00');
+const SECRET_WARS = new Date('2027-12-17T00:00:00');
+const STORE_KEY = 'roadToSecretWars.watched.v1';
+const DOME_KEY  = 'roadToSecretWars.domes.v1';
+
+let watched = new Set();
+let briefed = new Set();
+try { watched = new Set(JSON.parse(localStorage.getItem(STORE_KEY) || '[]')); } catch(e) {}
+try { briefed = new Set(JSON.parse(localStorage.getItem(DOME_KEY)  || '[]')); } catch(e) {}
+function save(){
+  try{
+    localStorage.setItem(STORE_KEY, JSON.stringify([...watched]));
+    localStorage.setItem(DOME_KEY,  JSON.stringify([...briefed]));
+  }catch(e){}
+}
+
+/* ===================== RENDER: ROAD ===================== */
+const allItems = [];
+PARTS.forEach(p => p.entries.forEach(e => { if(e.type==='item') allItems.push(e); }));
+
+const BADGE_CLASS = {CORE:'b-core', GATE:'b-gate', CONFIRMED:'b-conf', UNDATED:'b-undated', RUMORED:'b-rumor', OPTIONAL:'b-opt'};
+
+function renderRoad(){
+  const root = document.getElementById('roadmap');
+  let html = '', stepNo = 0;
+  PARTS.forEach((part, pi) => {
+    const items = part.entries.filter(e => e.type==='item');
+    html += `<section class="part" id="p${pi+1}">
+      <div class="part-head">
+        <div class="roman">${part.roman}</div>
+        <div class="part-title"><h2>${part.title}</h2><p>${part.sub}</p></div>
+        <div class="part-count" id="count-${pi}">0/${items.length}</div>
+      </div>
+      <button class="btn mark-all" data-part="${pi}">Mark all in this part</button>`;
+    part.entries.forEach(e => {
+      if(e.type==='stop'){
+        const head = e.text.split(' — ')[0];
+        const rest = e.text.split(' — ').slice(1).join(' — ');
+        html += `<div class="stop"><b>⛔ ${head}</b>${rest}</div>`;
+      } else {
+        stepNo++;
+        html += `<div class="item" data-id="${e.id}" data-part="${pi}">
+          <div class="row">
+            <div class="num"><span>${stepNo}</span></div>
+            <div class="body">
+              <div class="title-line">${e.title}</div>
+              <div class="meta"><span>${e.meta}</span>${e.tag?`<span>${e.tag}</span>`:''}</div>
+              <div class="badges"><span class="badge ${BADGE_CLASS[e.badge]||'b-opt'}">${e.badge}</span></div>
+              ${e.note?`<div class="note">${e.note}</div>`:''}
+              ${(e.watchFor||e.tiesIn)?`<div class="details-row">
+                ${e.watchFor?`<details><summary>Watch for 👀</summary><p>${e.watchFor}</p></details>`:''}
+                ${e.tiesIn?`<details><summary>How it ties in 🔗</summary><p>${e.tiesIn}</p></details>`:''}
+              </div>`:''}
+            </div>
+          </div>
+        </div>`;
+      }
+    });
+    html += `</section>`;
+  });
+  root.innerHTML = html;
+
+  root.querySelectorAll('.item').forEach(el => {
+    el.addEventListener('click', ev => {
+      if(ev.target.closest('details')) return;
+      const id = el.dataset.id;
+      watched.has(id) ? watched.delete(id) : watched.add(id);
+      save(); refresh();
+    });
+  });
+  root.querySelectorAll('.mark-all').forEach(btn => {
+    btn.addEventListener('click', ev => {
+      ev.stopPropagation();
+      const ids = PARTS[+btn.dataset.part].entries.filter(e=>e.type==='item').map(e=>e.id);
+      const allDone = ids.every(id=>watched.has(id));
+      ids.forEach(id => allDone ? watched.delete(id) : watched.add(id));
+      save(); refresh();
+    });
+  });
+}
+
+/* ===================== RENDER: DOMES ===================== */
+const TIER_LABEL = {locked:'Locked in', strong:'Strong case', wild:'Wildcard'};
+function renderDomes(){
+  const grid = document.getElementById('domegrid');
+  grid.innerHTML = DOMES.map(d => `
+    <article class="dome t-${d.tier}" data-id="${d.id}" data-tier="${d.tier}">
+      <div class="dome-top">
+        <div class="dome-n"><span>DOME ${String(d.n).padStart(2,'0')}</span>
+          <span class="badge ${d.tier==='locked'?'b-gate':(d.tier==='wild'?'b-rumor':'b-conf')}">${TIER_LABEL[d.tier]}</span></div>
+        <div class="dome-name">${d.name}</div>
+        <div class="dome-alt">${d.alt}</div>
+        <div class="dome-baron"><span>Baron</span>${d.baron}</div>
+      </div>
+      <div class="dome-body">
+        <div class="dome-what">${d.what}</div>
+        <div class="dome-mcu"><b>The MCU case</b>${d.mcu}</div>
+        <div class="dome-watch"><b>Watch first</b>${d.watch}</div>
+      </div>
+      <button class="dome-check" data-id="${d.id}">Mark as briefed</button>
+    </article>`).join('');
+
+  grid.querySelectorAll('.dome-check').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id;
+      briefed.has(id) ? briefed.delete(id) : briefed.add(id);
+      save(); refresh();
+    });
+  });
+
+  document.getElementById('deepnames').innerHTML =
+    DEEP_CUTS.map(n => `<span>${n}</span>`).join('');
+}
+
+/* ===================== RENDER: LAWS & NEXT ===================== */
+function renderStatic(){
+  document.getElementById('lawgrid').innerHTML = LAWS.map(l =>
+    `<div class="law"><div class="k">${l.k}</div><h3>${l.h}</h3><p>${l.p}</p></div>`).join('');
+  document.getElementById('nextgrid').innerHTML = NEXT.map(n =>
+    `<div class="nx"><div class="when">${n.when}</div><h3>${n.h}</h3><p>${n.p}</p>
+     <div class="badges"><span class="badge ${BADGE_CLASS[n.badge]||'b-opt'}">${n.badge}</span></div></div>`).join('');
+}
+
+/* ===================== REFRESH ===================== */
+function refresh(){
+  document.querySelectorAll('.item').forEach(el => el.classList.toggle('watched', watched.has(el.dataset.id)));
+  document.querySelectorAll('.dome').forEach(el => {
+    const on = briefed.has(el.dataset.id);
+    el.classList.toggle('briefed', on);
+    const b = el.querySelector('.dome-check');
+    if(b) b.textContent = on ? 'Briefed' : 'Mark as briefed';
+  });
+
+  PARTS.forEach((part, pi) => {
+    const ids = part.entries.filter(e=>e.type==='item').map(e=>e.id);
+    const done = ids.filter(id=>watched.has(id)).length;
+    const el = document.getElementById('count-'+pi);
+    if(el) el.textContent = `${done}/${ids.length}`;
+  });
+
+  const totalUnits = allItems.length + DOMES.length;
+  const doneUnits  = allItems.filter(e=>watched.has(e.id)).length + [...briefed].filter(id=>DOMES.some(d=>d.id===id)).length;
+  const pct = totalUnits ? Math.round(doneUnits/totalUnits*100) : 0;
+  document.getElementById('pct').textContent = pct + '%';
+  document.getElementById('done-count').textContent = `${allItems.filter(e=>watched.has(e.id)).length}/${allItems.length}`;
+  document.getElementById('dome-count').textContent = `${[...briefed].filter(id=>DOMES.some(d=>d.id===id)).length}/${DOMES.length}`;
+  document.getElementById('bar-fill').style.width = pct + '%';
+
+  const next = allItems.find(e=>!watched.has(e.id));
+  document.getElementById('upnext').textContent = next ? next.title
+    : (briefed.size < DOMES.length ? 'Brief yourself on the domes' : 'Nothing — see you Dec 17, 2027 🎬');
+
+  applyFilter();
+}
+
+/* ===================== DOME FILTER ===================== */
+let activeTier = 'all';
+function applyFilter(){
+  let shown = 0;
+  document.querySelectorAll('.dome').forEach(el => {
+    const t = el.dataset.tier;
+    const isBriefed = briefed.has(el.dataset.id);
+    const ok = activeTier === 'all' ? true
+             : activeTier === 'unbriefed' ? !isBriefed
+             : t === activeTier;
+    el.classList.toggle('hidden', !ok);
+    if(ok) shown++;
+  });
+  document.getElementById('dome-visible').textContent = shown + ' shown';
+}
+document.addEventListener('click', ev => {
+  const b = ev.target.closest('.filt');
+  if(!b) return;
+  document.querySelectorAll('.filt').forEach(x => x.classList.remove('on'));
+  b.classList.add('on');
+  activeTier = b.dataset.tier;
+  applyFilter();
+});
+
+/* ===================== COUNTDOWN ===================== */
+let target = DOOMSDAY;
+function tick(){
+  let ms = target - new Date();
+  if(ms < 0) ms = 0;
+  document.getElementById('cd-days').textContent  = Math.floor(ms/86400000);
+  document.getElementById('cd-hours').textContent = Math.floor(ms/3600000)%24;
+  document.getElementById('cd-mins').textContent  = Math.floor(ms/60000)%60;
+  document.getElementById('cd-secs').textContent  = Math.floor(ms/1000)%60;
+}
+setInterval(tick, 1000);
+
+const swDD = document.getElementById('sw-dd'), swSW = document.getElementById('sw-sw');
+function setTarget(which){
+  target = which === 'dd' ? DOOMSDAY : SECRET_WARS;
+  swDD.classList.toggle('on', which==='dd');
+  swSW.classList.toggle('on', which==='sw');
+  document.getElementById('premiere-line').innerHTML = which==='dd'
+    ? 'Avengers: Doomsday premieres <em>Dec 18, 2026</em>'
+    : 'Avengers: Secret Wars premieres <em>Dec 17, 2027</em>';
+  tick();
+}
+swDD.addEventListener('click', () => setTarget('dd'));
+swSW.addEventListener('click', () => setTarget('sw'));
+/* if Doomsday has already passed, default to Secret Wars */
+if(new Date() > DOOMSDAY) setTarget('sw');
+
+/* ===================== CONTROLS ===================== */
+document.getElementById('toggle-watched').addEventListener('click', function(){
+  document.body.classList.toggle('hide-watched');
+  this.textContent = document.body.classList.contains('hide-watched') ? 'Show watched' : 'Hide watched';
+});
+let resetArmed = null;
+document.getElementById('reset-btn').addEventListener('click', function(){
+  if(resetArmed){
+    clearTimeout(resetArmed); resetArmed = null;
+    watched.clear(); briefed.clear(); save(); refresh();
+    this.textContent = 'Progress reset';
+    setTimeout(() => { this.textContent = 'Reset progress'; }, 2000);
+  } else {
+    this.textContent = 'Tap again to confirm';
+    resetArmed = setTimeout(() => { resetArmed = null; this.textContent = 'Reset progress'; }, 3000);
+  }
+});
+document.getElementById('share-btn').addEventListener('click', async function(){
+  const data = {title:'Road to Secret Wars', text:'Battleworld, the 41 domes, and every Marvel project between Doomsday and Secret Wars.', url:location.href};
+  if(navigator.share){ try{ await navigator.share(data); return; }catch(e){} }
+  try{ await navigator.clipboard.writeText(location.href); this.textContent = 'Link copied!'; }
+  catch(e){ this.textContent = 'Copy failed'; }
+  setTimeout(() => { this.textContent = 'Share'; }, 2000);
+});
+
+/* ===================== BOOT ===================== */
+renderRoad();
+renderDomes();
+renderStatic();
+refresh();
+tick();
+</script>
+</body>
+</html>
