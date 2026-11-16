@@ -847,11 +847,23 @@ render();
     el.style.scrollBehavior='auto'; window.scrollTo(0,y); el.style.scrollBehavior=was;
   }
 
-  // open it, and move the view down by exactly its height in the same frame
-  var y0=window.scrollY;
+  /* Open it and place the view in the same frame. The browser's own scroll
+     restoration is switched off in <head>, because it would restore a
+     position that already counted the frame before the frame exists. So
+     this page remembers its own place, relative to the start of Secret Wars,
+     and only uses it on a reload or a back/forward visit. */
+  var SPOT='roadToSecretWars.spot';
+  var nav=(performance.getEntriesByType && performance.getEntriesByType('navigation')[0]||{}).type;
+  var saved=null;
+  if(nav==='reload'||nav==='back_forward'){ try{ saved=sessionStorage.getItem(SPOT); }catch(e){} }
   wrap.classList.add('on');
   var H=wrap.offsetHeight;
-  jump(y0+H);
+  var anchor=location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+  if(saved!==null && saved!=='' && !isNaN(+saved)) jump(Math.max(0,H+(+saved)));
+  else if(anchor){ jump(0); jump(anchor.getBoundingClientRect().top); }
+  else jump(H);
+  function remember(){ try{ sessionStorage.setItem(SPOT,String(Math.round(window.scrollY-H))); }catch(e){} }
+  addEventListener('pagehide',remember);
 
   // keep the reader where they were if the frame changes height
   if(window.ResizeObserver) new ResizeObserver(function(){
