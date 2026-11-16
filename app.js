@@ -833,6 +833,17 @@ render();
    jumps to its own bottom when it sees ?embed=sw), from where you can keep
    scrolling up through all of it.
    ============================================================ */
+/* The top of the page runs with Doomsday's green as a live liquid (fluid.js).
+   Mostly green ink, fed from the top edge; on everywhere, including when this
+   page is shown inside the Doomsday Protocol, because that is exactly where
+   the handover from green to violet is seen. */
+(function edgeLiquid(){
+  var host=document.getElementById('edgeFluid');
+  if(!host) return;
+  if(!window.SeamFluid){ host.classList.add('no-fluid'); return; }
+  try{ window.SeamFluid(host,{top:0.74}); }catch(err){ host.classList.add('no-fluid'); }
+})();
+
 (function partOne(){
   var wrap=document.getElementById('partOne');
   var seam=document.getElementById('seam');
@@ -893,9 +904,6 @@ render();
     });
     ro.observe(wrap); if(seam) ro.observe(seam);
   }
-
-  // the liquid itself
-  if(seam && window.SeamFluid){ try{ window.SeamFluid(seam); }catch(err){ seam.classList.add('no-fluid'); } }
 
   // load Doomsday once this page is settled, or straight away if someone heads up
   var frame=null;
