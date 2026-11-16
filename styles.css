@@ -1,0 +1,974 @@
+/* Road to Secret Wars - styles.
+   Forked from The Doomsday Protocol and recoloured: every green there is
+   violet here (violet is what Doomsday uses to mean Secret Wars). */
+
+  :root{
+    --bg:#070308;
+    --bg-soft:#0d0610;
+    /* surfaces are translucent so the mark reads through the whole page */
+    --card-2:rgba(24,13,30,.74);
+    --edge:#291730;
+    --edge-hot:#472d54;
+    --ink:#efe8f4;
+    --ink-dim:#b7a6c2;
+    /* lifted to clear 4.5:1 — it carries 9-13px text (tags, years, footer) */
+    --ink-faint:#907d9c;
+    --ink-hi:#f4f8fa;   /* display headings only */
+    /* one mint hairline in three strengths: divider, rim, hot rim.
+       Every neutral 1px edge on the page draws from these. */
+    --rim:228,198,246;
+    --rim-1:.09;   /* dividers inside a container */
+    --rim-2:.14;   /* a container's own edge      */
+    --rim-3:.26;   /* a lit or raised edge        */
+    --acc:#b48cff;
+    --acc-lt:#ddccff;
+    --acc-glow:rgba(180,140,255,.42);
+    --doom:#9466c8;
+    --doom-glow:rgba(148,102,200,.38);
+    --crimson:#e2564a;
+    --crimson-rgb:226,86,74;  /* every red wash derives from this */
+    --violet:#a98cf0;
+    --cyan:#5fb8c9;
+    --mono:'Cascadia Code','Consolas',ui-monospace,'SFMono-Regular',monospace;
+    --serif:Georgia,'Times New Roman',serif;
+    --sans:'Segoe UI',system-ui,-apple-system,sans-serif;
+    /* radius scale: the bigger the container, the rounder the corner */
+    --r-xs:10px;   /* poster tiles, tag chips        */
+    --r-sm:14px;   /* rows and inner surfaces        */
+    --r-md:18px;   /* content cards                  */
+    --r-lg:24px;   /* major panels                   */
+    /* motion: three speeds, two curves. Every transition on the page uses
+       one of these, so the whole site settles with one hand's timing. */
+    --t-fast:140ms;  /* pointer state: hover, press, chip on/off       */
+    --t-mid:220ms;   /* reveal + confirm: tick, panel, sticky bar      */
+    --t-slow:420ms;  /* long travel: progress fills, hero letters      */
+    --e-out:cubic-bezier(.2,.8,.2,1);   /* the house curve             */
+    --e-pop:cubic-bezier(.2,1.5,.4,1);  /* overshoot - tick badge ONLY */
+    /* one page column and one gutter, shared by topbar, hero and wrap */
+    --maxw:1060px;
+    --gutter:20px;
+    /* where an entry's title column starts: row padding + poster + gap.
+       The row divider hangs off this so it can never drift again. */
+    --row-text-x:93px;
+    /* comfortable reading measure for the long prose blocks */
+    --measure:72ch;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);color:var(--ink);font-family:var(--sans);
+    line-height:1.6;min-height:100vh;overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--acc);text-decoration-color:rgba(180,140,255,.35);
+    transition:text-decoration-color var(--t-fast) var(--e-out)}
+  a:hover{text-decoration-color:var(--acc)}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+    clip:rect(0 0 0 0);white-space:nowrap;border:0}
+  .skip{position:absolute;left:-9999px;top:0;z-index:200;background:var(--acc);color:#0d0412;
+    padding:10px 18px;border-radius:0 0 10px 0;font-family:var(--mono);font-size:12px}
+  .skip:focus{left:0}
+  :focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+  /* one focus ring everywhere, and a scrollbar that belongs to the page */
+  html{scrollbar-color:rgba(180,140,255,.34) rgba(9,4,12,.6);scrollbar-width:thin}
+  ::-webkit-scrollbar{width:11px;height:11px}
+  ::-webkit-scrollbar-track{background:rgba(9,4,12,.6)}
+  ::-webkit-scrollbar-thumb{
+    background:linear-gradient(180deg,rgba(180,140,255,.42),rgba(148,102,200,.42));
+    border-radius:99px;border:2.5px solid rgba(7,3,8,.9);
+  }
+  ::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,var(--acc),var(--doom))}
+  ::-webkit-scrollbar-corner{background:transparent}
+  /* anchored jumps clear the floating search tile */
+  :target{scroll-margin-top:86px}
+  ::selection{background:rgba(180,140,255,.3)}
+
+  /* ============ BACKGROUND EMBLEM ============ */
+  /* ONE mark. Pinned to the viewport — it does not travel with the page. */
+  /* The inline SVG is ~6000 paths inside blur filters. Animating it live made
+     the browser re-rasterise the whole thing every frame, which is what caused
+     the flicker behind the mark on slower devices. It is now drawn once, baked
+     to an image, and shown on a single GPU-composited layer. Identical output,
+     one layer instead of thousands of filtered vectors. */
+  #emblemWrap{
+    position:fixed;top:-2vh;left:50%;transform:translateX(-50%);
+    width:min(96vh,104vw);height:auto;z-index:0;pointer-events:none;
+    -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 56%,rgba(0,0,0,.7) 78%,rgba(0,0,0,.3) 93%,transparent 100%);
+            mask-image:linear-gradient(180deg,#000 0%,#000 56%,rgba(0,0,0,.7) 78%,rgba(0,0,0,.3) 93%,transparent 100%);
+    opacity:.44;
+    contain:paint;
+  }
+  /* once baked, take the live SVG out of the render tree completely.
+     visibility:hidden would leave its ~3900 filtered paths in play. */
+  #emblemWrap.baked{display:none}
+  #markLayer{
+    position:fixed;top:-2vh;left:50%;
+    width:min(96vh,104vw);aspect-ratio:1/1;
+    z-index:0;pointer-events:none;opacity:.44;
+    background-repeat:no-repeat;background-position:center top;background-size:100% auto;
+    -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 56%,rgba(0,0,0,.7) 78%,rgba(0,0,0,.3) 93%,transparent 100%);
+            mask-image:linear-gradient(180deg,#000 0%,#000 56%,rgba(0,0,0,.7) 78%,rgba(0,0,0,.3) 93%,transparent 100%);
+    transform:translateX(-50%) translateZ(0);
+    will-change:transform;
+    animation:breathe 16s ease-in-out infinite;
+  }
+  @keyframes breathe{
+    0%,100%{transform:translateX(-50%) translateZ(0) scale(1)}
+    50%    {transform:translateX(-50%) translateZ(0) scale(1.016)}
+  }
+
+  /* light travelling out along the timeline branches, as in the Loki finale */
+  #treeLit path{stroke-dasharray:var(--len) var(--len);animation:flow 9s linear infinite;animation-delay:var(--d)}
+  @keyframes flow{0%{stroke-dashoffset:var(--len);opacity:0}
+                  18%{opacity:1}
+                  70%{stroke-dashoffset:0;opacity:.9}
+                  100%{stroke-dashoffset:calc(var(--len) * -1);opacity:0}}
+  /* the light behind the panes breathes */
+  #emblemWrap g[mask]{animation:paneBreath 7.5s ease-in-out infinite}
+  @keyframes paneBreath{0%,100%{opacity:.88}45%{opacity:1}70%{opacity:.8}}
+  #glowlayer{
+    position:absolute;inset:0;height:100%;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(ellipse 66% 42% at 50% 6%, rgba(147,89,191,.16), transparent 72%),
+      radial-gradient(ellipse 78% 48% at 50% 24%, rgba(46,86,104,.16), transparent 74%),
+      radial-gradient(ellipse 96% 60% at 50% 104%, rgba(180,140,255,.05), transparent 70%);
+  }
+  #vignette{
+    position:absolute;inset:0;height:100%;z-index:1;pointer-events:none;
+    background:
+      radial-gradient(ellipse 54% 20% at 50% 28%, rgba(7,3,8,.34), rgba(7,3,8,0) 72%),
+      linear-gradient(180deg, rgba(7,3,8,.30) 0%, rgba(7,3,8,.18) 22%, rgba(7,3,8,.20) 100%);
+  }
+  /* Doom's magic, barely there: small dark motes drifting across everything.
+     One composited layer, two offset tiles at different speeds so it never
+     reads as a repeating grid. Deliberately almost invisible. */
+  #motes{
+    position:fixed;inset:-10% -10% -10% -10%;z-index:1;pointer-events:none;
+    background-repeat:repeat;background-size:520px 520px, 340px 340px;
+    opacity:.55;
+    animation:moteDrift 62s linear infinite;
+    will-change:transform;
+  }
+  @keyframes moteDrift{
+    from{transform:translate3d(0,0,0)}
+    to  {transform:translate3d(-520px,-340px,0)}
+  }
+
+  #grain{
+    position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .page{position:relative;z-index:2}
+  body{position:relative}
+
+  /* ============ TOP BAR ============ */
+  .topbar{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:18px var(--gutter);max-width:var(--maxw);margin:0 auto;flex-wrap:wrap;
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.26em;
+    color:var(--ink-faint);text-transform:uppercase;
+  }
+  /* sits over the brightest part of the mark — let it recede */
+  .topbar .ver{color:rgba(188,159,205,.30);text-shadow:0 1px 6px rgba(7,3,8,.9)}
+  .topbar .pill{
+    border:1px solid var(--edge);border-radius:99px;padding:7px 16px;
+    color:var(--ink-dim);letter-spacing:.12em;background:rgba(180,140,255,.05);
+  }
+
+  /* ============ HERO ============ */
+  .hero{max-width:900px;margin:0 auto;padding:16px var(--gutter) 6px;text-align:center}
+  .mark{width:clamp(78px,12vw,116px);height:auto;display:block;margin:0 auto 20px;
+    filter:drop-shadow(0 0 12px rgba(180,140,255,.5)) drop-shadow(0 0 40px rgba(180,140,255,.26))}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.44em;color:var(--acc);
+    text-transform:uppercase;margin-bottom:16px}
+  h1{font-family:var(--serif);font-weight:700;font-size:clamp(32px,9.4vw,86px);
+    line-height:1.02;letter-spacing:.005em}
+  h1 .w{color:var(--ink-hi);text-shadow:0 0 40px rgba(255,255,255,.16),0 4px 30px rgba(7,3,8,.92)}
+  /* PROTOCOL is set as a stamped classification line rather than a second
+     serif word: mono, wide-tracked, rules either side. Still knocked out so
+     the mark behind reads straight through the letterforms. */
+  h1 .g{
+    display:flex;align-items:center;justify-content:center;gap:.42em;
+    margin-top:clamp(10px,1.6vw,20px);
+    font-family:var(--mono);
+    font-size:clamp(15px,3.5vw,31px);
+    font-weight:700;
+    line-height:1;
+  }
+  h1 .g i{
+    font-style:normal;
+    color:rgba(183,150,255,.14);
+    -webkit-text-stroke:1.6px var(--acc);
+    paint-order:stroke fill;
+    text-shadow:0 0 22px var(--acc-glow),0 0 60px var(--acc-glow);
+    animation:protoIn var(--t-slow) var(--e-out) both;
+  }
+  h1 .g i:nth-child(1){animation-delay:.02s} h1 .g i:nth-child(2){animation-delay:.06s}
+  h1 .g i:nth-child(3){animation-delay:.10s} h1 .g i:nth-child(4){animation-delay:.14s}
+  h1 .g i:nth-child(5){animation-delay:.18s} h1 .g i:nth-child(6){animation-delay:.22s}
+  h1 .g i:nth-child(7){animation-delay:.26s} h1 .g i:nth-child(8){animation-delay:.30s}
+  @keyframes protoIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  h1 .g::before,h1 .g::after{
+    content:'';height:1px;width:clamp(20px,7vw,74px);flex:none;
+    background:linear-gradient(90deg,transparent,var(--acc));
+    opacity:.55;
+  }
+  h1 .g::after{background:linear-gradient(90deg,var(--acc),transparent)}
+  .tagline{margin:22px auto 0;max-width:690px;font-size:18px;color:var(--ink-dim);
+    text-shadow:0 2px 18px rgba(7,3,8,.95),0 0 34px rgba(7,3,8,.85)}
+  .tagline b{color:var(--ink)}
+  .kicker{margin:14px auto 0;max-width:660px;font-size:14.5px;color:var(--ink-faint)}
+
+  /* ============ COUNTDOWN ============ */
+  .cd-switch{display:flex;justify-content:center;gap:8px;margin:32px 0 16px;flex-wrap:wrap}
+  .cd-switch button{
+    font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    background:transparent;border:1px solid var(--edge);color:var(--ink-faint);
+    border-radius:99px;padding:8px 17px;cursor:pointer;
+    transition:color var(--t-fast) var(--e-out),border-color var(--t-fast) var(--e-out),
+               background-color var(--t-fast) var(--e-out);
+  }
+  .cd-switch button:hover{color:var(--ink-dim);border-color:var(--edge-hot)}
+  .cd-switch button.on{border-color:var(--acc);color:var(--acc);background:rgba(180,140,255,.09)}
+  .countdown{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+  .tile{
+    background:linear-gradient(180deg,rgba(180,140,255,.09),rgba(180,140,255,.015));
+    border:1px solid var(--edge);border-radius:var(--r-sm);
+    min-width:92px;padding:15px 10px 11px;backdrop-filter:blur(3px);
+  }
+  .tile b{font-family:var(--serif);font-size:40px;color:var(--acc-lt);display:block;line-height:1;
+    text-shadow:0 0 22px var(--acc-glow)}
+  .tile span{font-family:var(--mono);font-size:9.5px;letter-spacing:.24em;color:var(--ink-faint);
+    text-transform:uppercase;display:block;margin-top:8px}
+  .cd-target{font-family:var(--mono);font-size:11.5px;letter-spacing:.2em;color:var(--ink-faint);
+    text-transform:uppercase;margin-top:16px}
+
+  /* ============ SHELL ============ */
+  /* ===== GLASS BOX PANELS =====
+     Blur is expensive, so only a handful of large containers are real glass.
+     Everything inside them is plain translucent fill and inherits the effect,
+     which looks identical and costs a fraction as much to composite. */
+  .glass{
+    -webkit-backdrop-filter:blur(10px) saturate(125%);
+            backdrop-filter:blur(10px) saturate(125%);
+    background:linear-gradient(160deg,rgba(32,18,40,.50),rgba(13,6,16,.62));
+    border:1px solid rgba(var(--rim),var(--rim-2));
+    border-radius:var(--r-md);
+    box-shadow:0 1px 0 rgba(213,179,241,.07) inset, 0 18px 44px rgba(0,0,0,.45);
+  }
+  /* inner surfaces: no blur of their own */
+  .entry,.detail,.stat,.tile,.card,details.faq,.stop{
+    -webkit-backdrop-filter:none;backdrop-filter:none;
+  }
+
+  /* The movie tiles are the most transparent glass on the page — heavy blur
+     smears the mark into mush, so these get a light blur and a thin tint,
+     and the type carries its own shadow to stay readable over the logo. */
+  /* ===== LIQUID GLASS =====
+     Not just a transparent box: the body of the pane is near-clear, the rim
+     refracts what is behind it like the thick edge of a lens, and a specular
+     sheen runs across the top-left. Thickness comes from stacked inset rims. */
+  .lglass{
+    position:relative;
+    border-radius:var(--r-lg);
+    background:linear-gradient(160deg,rgba(238,210,255,.006),rgba(9,4,12,.008));
+    -webkit-backdrop-filter:saturate(118%);
+            backdrop-filter:saturate(118%);
+    border:0;
+    /* a finished edge: hairline, bevel, seated shadow — six layers of it */
+    box-shadow:
+      inset 0 0 0 1px rgba(var(--rim),var(--rim-2)), /* continuous hairline */
+      inset 0 1.5px 0 rgba(246,232,255,.42),        /* lit top bevel       */
+      inset 1.5px 0 0 rgba(230,206,244,.17),        /* left bevel          */
+      inset -1.5px 0 0 rgba(230,206,244,.13),       /* right bevel         */
+      inset 0 -2px 0 rgba(164,119,191,.26),         /* shadowed under-edge */
+      inset 0 26px 34px -30px rgba(250,240,255,.55),/* light rolling in    */
+      inset 0 -20px 30px -28px rgba(0,0,0,.55),     /* thickness at base   */
+      0 1px 0 rgba(228,198,246,.05),                /* seat                */
+      0 22px 54px rgba(0,0,0,.34),
+      0 3px 12px rgba(0,0,0,.24);
+  }
+  /* the refracting edge — a rim-only band that bends the backdrop, softened
+     inward so it fades into the pane instead of stopping at a hard step */
+  .lglass::before{
+    content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+    padding:14px;box-sizing:border-box;opacity:.78;
+    -webkit-backdrop-filter:blur(5px) saturate(150%) brightness(1.05);
+            backdrop-filter:blur(5px) saturate(150%) brightness(1.05);
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+            mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;
+            mask-composite:exclude;
+  }
+  /* specular sheen across the face, plus a caught highlight along the top edge */
+  .lglass::after{
+    content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.13) 0, rgba(255,255,255,0) 12px),
+      radial-gradient(120% 60% at 22% -8%, rgba(245,226,255,.13), rgba(255,255,255,0) 62%),
+      linear-gradient(138deg,
+        rgba(255,255,255,.14) 0%,
+        rgba(255,255,255,.035) 18%,
+        rgba(255,255,255,0) 42%,
+        rgba(255,255,255,0) 70%,
+        rgba(231,190,255,.075) 100%);
+    mix-blend-mode:screen;
+  }
+  .lglass > *{position:relative;z-index:1}
+
+  /* with almost no panel behind it, every glyph carries its own backing */
+  .part-list .e-title{text-shadow:0 1px 3px #070308,0 0 12px rgba(7,3,8,1),0 0 26px rgba(7,3,8,.95)}
+  .part-list .e-no,.part-list .e-year{text-shadow:0 1px 3px #070308,0 0 12px rgba(7,3,8,1)}
+  .part-list .tag{background:rgba(7,3,9,.72);text-shadow:0 1px 3px rgba(7,3,8,.95)}
+  .part-list .e-caret{text-shadow:0 1px 4px #070308}
+  .part-list .detail{
+    background:linear-gradient(160deg,rgba(238,210,255,.018),rgba(9,4,12,.03));
+    border:0;border-radius:var(--r-sm);
+    -webkit-backdrop-filter:blur(1.5px) saturate(140%);
+            backdrop-filter:blur(1.5px) saturate(140%);
+    box-shadow:inset 0 1px 0 rgba(var(--rim),var(--rim-3)), inset 0 -1px 0 rgba(var(--rim),var(--rim-1)),
+               0 8px 22px rgba(0,0,0,.24);
+    text-shadow:0 1px 3px #070308,0 0 12px rgba(7,3,8,.98);
+  }
+  .part-list .detail .why{text-shadow:0 1px 3px #070308,0 0 14px rgba(7,3,8,1)}
+  .part-list .detail .dgrid em,.part-list .detail .dgrid span,
+  .part-list .detail .dsub,.part-list .detail .dnote{text-shadow:0 1px 3px #070308,0 0 12px rgba(7,3,8,1)}
+  .part-list .detail .dgrid div{border-top-color:rgba(var(--rim),var(--rim-2))}
+  .part-list .detail .dsub{border-top-color:rgba(var(--rim),var(--rim-2))}
+  .part-list .stop{background:rgba(40,14,11,.72)}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--gutter)}
+  section{margin-top:64px}
+  .sec-head{margin-bottom:20px}
+  /* Extensions' list is an empty div at load, so the first .part's 52px
+     margin collapsed through it and beat the heading's 20px. */
+  #extList{margin-top:0}
+  #extList > .part:first-child{margin-top:0}
+  /* a sub-head inside a section, not at its top, opens a new block */
+  section > .sec-head:not(:first-child){margin-top:48px}
+  /* three line-heights chosen by rank, not by which heading got noticed:
+     1.02 for the hero, 1.15 for display headings, 1.25 for card headings. */
+  .card-h{line-height:1.25}
+  .sec-head h2{font-family:var(--serif);font-size:clamp(24px,4.4vw,38px);color:var(--ink-hi);line-height:1.15}
+  .sec-head p{color:var(--ink-dim);margin-top:8px;max-width:790px;font-size:15.5px}
+  .rule{height:1px;background:linear-gradient(90deg,transparent,var(--edge-hot),transparent);margin:56px 0}
+  /* section{margin-top:64px} would collapse to 64 above / 56 below and lean */
+  .rule + section{margin-top:56px}
+
+  /* ============ PROGRESS ============ */
+  .progress-card{padding:26px 24px;margin-top:40px;border-radius:var(--r-lg)}
+  /* the pair is one panel: 40px outside it, 16px between its two halves */
+  .progress-card + .progress-card{margin-top:16px}
+
+  /* the priority bar: brighter, larger, and sitting above the complete one */
+  .progress-card.primary{
+    margin-top:40px;
+    border:1px solid rgba(180,140,255,.28);
+    box-shadow:inset 0 0 0 1px rgba(228,198,246,.10),
+               inset 0 1.5px 0 rgba(246,232,255,.40),
+               0 0 34px rgba(180,140,255,.10),
+               0 22px 54px rgba(0,0,0,.34);
+  }
+  /* same label, same job, same tracking as the one in the card below */
+  .pc-top .lbl.hot{color:var(--acc)}
+  .progress-card.primary .pct{font-size:44px;color:var(--acc-lt);
+    text-shadow:0 0 26px var(--acc-glow)}
+  .bar.exp{height:18px;border:1px solid rgba(180,140,255,.24)}
+  .bar.exp i{background:linear-gradient(90deg,var(--doom),var(--acc) 70%,var(--acc-lt));
+    box-shadow:0 0 22px var(--acc-glow), inset 0 1px 0 rgba(255,255,255,.28)}
+  .progress-card.primary .pc-msg{color:var(--ink);font-size:15.5px}
+
+  /* same breakpoints as .stats below — they are two halves of one panel */
+  .exp-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:12px;margin-top:20px}
+  .exp-stats div{border-top:1px solid rgba(180,140,255,.20);padding-top:9px}
+  .exp-stats b{display:block;font-family:var(--serif);font-size:24px;color:var(--acc-lt)}
+  .exp-stats span{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.16em;
+    color:var(--ink-faint);text-transform:uppercase;margin-top:5px;line-height:1.5}
+  .exp-note{margin-top:18px;padding-top:15px;border-top:1px dashed rgba(180,140,255,.18);
+    font-size:14px;color:var(--ink-dim);line-height:1.65;max-width:var(--measure)}
+  .exp-note b{color:var(--acc-lt)}
+  #btnExpFilter{margin-left:6px;vertical-align:baseline;
+    border-color:var(--acc);color:var(--acc);background:rgba(180,140,255,.10)}
+  #btnExpFilter:hover{background:rgba(180,140,255,.18)}
+  @media (max-width:640px){
+    .progress-card.primary .pct{font-size:36px}
+    .bar.exp{height:15px}
+    #btnExpFilter{display:block;margin:10px 0 0}
+  }
+
+  .pc-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .pc-top .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.26em;color:var(--ink-faint);text-transform:uppercase}
+  .pc-top .pct{font-family:var(--serif);font-size:34px;color:var(--acc-lt)}
+  .bar{height:12px;border-radius:99px;background:rgba(9,4,12,.72);border:1px solid var(--edge);margin:14px 0 6px;overflow:hidden}
+  .bar i{display:block;height:100%;width:0%;border-radius:99px;
+    background:linear-gradient(90deg,var(--doom),var(--acc));
+    box-shadow:0 0 18px var(--acc-glow);transition:width var(--t-slow) var(--e-out)}
+  .pc-msg{font-size:14.5px;color:var(--ink-dim);margin-top:10px;min-height:22px}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:12px;margin-top:22px}
+  .stat{background:rgba(255,255,255,.018);border:1px solid var(--edge);border-radius:var(--r-sm);padding:14px 14px}
+  .stat b{display:block;font-family:var(--serif);font-size:25px;color:var(--ink)}
+  .stat span{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;
+    color:var(--ink-faint);text-transform:uppercase;margin-top:6px;line-height:1.5}
+
+  .planner{margin-top:22px;border-top:1px dashed var(--edge);padding-top:18px;
+    display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:14.5px;color:var(--ink-dim)}
+  .planner input[type=date]{
+    background:rgba(9,4,12,.72);border:1px solid var(--edge);color:var(--ink);border-radius:var(--r-xs);
+    padding:8px 10px;font-family:var(--mono);font-size:13px;color-scheme:dark;
+  }
+  .planner .out{color:var(--acc-lt);font-family:var(--mono);font-size:13.5px}
+
+  /* ============ CONTROLS ============ */
+  /* The full control panel stays put at the top of the list. Scroll up to
+     reach the filters. The only thing that follows you down the page is a
+     bare search tile — nothing else rides along. */
+  .controls{position:static;margin-top:34px;padding:14px;border-radius:var(--r-lg)}
+  #stickySearch{
+    position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-140%);
+    z-index:40;width:min(420px,calc(100vw - 32px));
+    padding:7px;border-radius:99px;
+    opacity:0;pointer-events:none;transition:transform var(--t-mid) var(--e-out),opacity var(--t-mid) var(--e-out);
+  }
+  #stickySearch.show{transform:translateX(-50%) translateY(0);opacity:1;pointer-events:auto}
+  #stickySearch input{width:100%;padding:9px 40px 9px 17px}
+  #stickySearch input::placeholder{color:var(--ink-faint)}
+  #stickySearch .up{
+    position:absolute;right:14px;top:50%;transform:translateY(-50%);
+    background:transparent;border:0;color:var(--ink-faint);cursor:pointer;
+    font-family:var(--mono);font-size:15px;line-height:1;padding:6px 9px;border-radius:var(--r-xs);
+  }
+  #stickySearch .up:hover{color:var(--acc)}
+  .ctl-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .ctl-row + .ctl-row{margin-top:10px}
+  /* on small screens the filter rows fold away behind a single button */
+  .ctl-toggle{display:none}
+  @media (max-width:760px){
+    .ctl-toggle{display:inline-flex;align-items:center;gap:7px}
+    .controls.folded .ctl-fold{display:none}
+  }
+  .ctl-lbl{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;color:var(--ink-faint);
+    text-transform:uppercase;margin-right:2px}
+  .chip{
+    font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    background:transparent;border:1px solid var(--edge);color:var(--ink-faint);
+    border-radius:99px;padding:7px 14px;cursor:pointer;
+    transition:color var(--t-fast) var(--e-out),border-color var(--t-fast) var(--e-out),
+               background-color var(--t-fast) var(--e-out);
+  }
+  .chip:hover{color:var(--ink-dim);border-color:var(--edge-hot)}
+  /* every button settles a hair under the press, like a real one */
+  .chip:active,.cd-switch button:active,.mark-all:active{transform:translateY(1px)}
+  .chip.on{border-color:var(--acc);color:var(--acc);background:rgba(180,140,255,.1)}
+  .chip.danger:hover{border-color:var(--crimson);color:var(--crimson)}
+  #btnInstall{border-color:var(--acc);color:var(--acc);background:rgba(180,140,255,.10)}
+  #btnInstall[hidden]{display:none}
+  /* the fixed tile and the one in the panel are the same control */
+  .search,#stickySearch input{background:rgba(9,4,12,.72);border:1px solid var(--edge);
+    color:var(--ink);border-radius:99px;font-family:var(--sans);font-size:14.5px}
+  .search{flex:1;min-width:180px;padding:8px 15px}
+  .search::placeholder{color:var(--ink-faint)}
+  /* hover first: focus and hover have equal specificity here, so focus has
+     to come last or pointing at a focused field would beat the focus colour */
+  .search:hover,#stickySearch input:hover,
+  .planner input[type=date]:hover{border-color:var(--edge-hot)}
+  .search:focus,#stickySearch input:focus{outline:none;border-color:var(--acc)}
+  .count-note{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--ink-faint);
+    text-transform:uppercase;margin-left:auto}
+
+  /* ============ PARTS + ENTRIES ============ */
+  .part{margin-top:52px;scroll-margin-top:150px}
+  .part-head{border-left:3px solid var(--acc);padding-left:17px;margin-bottom:6px}
+  .part-head.ext{border-left-color:var(--cyan)}
+  .part-head .no{font-family:var(--mono);font-size:10.5px;letter-spacing:.3em;color:var(--acc);text-transform:uppercase}
+  .part-head.ext .no{color:var(--cyan)}
+  .part-head h3{font-family:var(--serif);font-size:clamp(21px,3.4vw,30px);color:var(--ink-hi);margin-top:4px;line-height:1.15}
+  .part-head p{color:var(--ink-dim);font-size:14.5px;margin-top:7px;max-width:790px}
+  .part-meta{display:flex;gap:14px;flex-wrap:wrap;margin:12px 0 18px 20px;
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--ink-faint);text-transform:uppercase}
+  .mark-all{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;
+    background:transparent;border:1px solid var(--edge);color:var(--ink-faint);border-radius:99px;
+    padding:6px 12px;cursor:pointer;
+    transition:color var(--t-fast) var(--e-out),border-color var(--t-fast) var(--e-out),
+               background-color var(--t-fast) var(--e-out)}
+  /* hover dims like every other small button; only .on means selected */
+  .mark-all:hover{color:var(--ink-dim);border-color:var(--edge-hot)}
+  .card.empty{margin-top:32px;text-align:center;padding:26px 22px;font-size:15px;color:var(--ink-dim)}
+  .card.empty b{color:var(--acc-lt)}
+  .part-bar{height:4px;background:rgba(9,4,12,.72);border-radius:99px;margin:0 0 18px 20px;overflow:hidden;max-width:280px}
+  .part-bar i{display:block;height:100%;width:0;border-radius:99px;
+    background:linear-gradient(90deg,var(--doom),var(--acc));transition:width var(--t-slow) var(--e-out)}
+
+  /* entries are rows inside the part's glass box, not boxes of their own */
+  .part-list{padding:8px;margin-bottom:8px}
+  .entry{
+    display:flex;gap:12px;align-items:flex-start;
+    border:0;border-radius:var(--r-sm);background:transparent;
+    padding:12px 12px;position:relative;
+    transition:background-color var(--t-fast) var(--e-out),opacity var(--t-mid) var(--e-out);
+  }
+  .entry + .entry::before{content:'';position:absolute;left:var(--row-text-x);right:12px;top:0;height:1px;
+    transition:background-color var(--t-fast) var(--e-out);
+    background:rgba(var(--rim),var(--rim-1))}
+  /* a closed row is a poster and its title — centre them so it reads as
+     one object rather than a caption pinned to the poster's top corner */
+  .entry:not(.open){align-items:center}
+  .entry:not(.open) .e-poster{margin-top:0}
+  .entry:not(.open) .e-caret{margin-top:0}
+  .entry:hover{background:rgba(187,139,221,.055)}
+  .entry:hover::before,.entry:hover + .entry::before{background:transparent}
+  /* dim the text column only — the poster carries its own watched state
+     and the confirm badge has to stay legible */
+  .entry.done .e-body,.entry.done .e-caret{opacity:.5}
+  .entry.done .e-title{text-decoration:line-through;text-decoration-color:var(--ink-faint)}
+  .entry:focus-within{background:rgba(187,139,221,.07)}
+
+  /* The poster is the control: click it to mark the title watched. */
+  .cb.e-poster{
+    padding:0;border:0;background:transparent;cursor:pointer;appearance:none;
+    transition:transform var(--t-fast) var(--e-out), box-shadow var(--t-fast) var(--e-out);
+  }
+  .cb.e-poster:hover{transform:translateY(-2px) scale(1.03);
+    box-shadow:0 0 0 1px rgba(180,140,255,.45), 0 10px 20px rgba(0,0,0,.55)}
+  .cb.e-poster:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+  .cb.e-poster:active{transform:scale(.97)}
+
+  /* tick badge, drawn over the corner of the art */
+  .ptick{
+    position:absolute;right:4px;bottom:4px;z-index:6;width:20px;height:20px;border-radius:50%;
+    background:var(--doom);box-shadow:0 0 0 2px rgba(9,3,12,.85), 0 0 12px var(--doom-glow);
+    opacity:0;transform:scale(.4);
+    transition:opacity var(--t-fast) var(--e-out), transform var(--t-mid) var(--e-pop);
+  }
+  .ptick::after{
+    content:'';position:absolute;left:7px;top:3.5px;width:5px;height:10px;
+    border:solid #0e0414;border-width:0 2.4px 2.4px 0;transform:rotate(42deg);
+  }
+  .cb.on .ptick{opacity:1;transform:scale(1);transition-delay:60ms}
+  /* desaturate the ART, not the button - a filter on the button also
+     greys the badge sitting inside it, however you paint the badge. */
+  .cb.on{filter:none}
+  .cb.on > *:not(.ptick){filter:grayscale(.55) brightness(.62);
+    transition:filter var(--t-mid) var(--e-out)}
+  /* the composed sheets screen-blend, so they need their own dimming
+     that keeps the brightness the blend mode depends on */
+  .e-poster.composed.on .plogo{filter:grayscale(.55) brightness(.93) contrast(1.15)
+    saturate(1.1) drop-shadow(0 1px 5px rgba(0,0,0,.7))}
+  .e-poster.composed.on::after{opacity:.62}
+  @media (max-width:640px){ .ptick{width:17px;height:17px;right:3px;bottom:3px}
+    .ptick::after{left:6px;top:3px;width:4px;height:8px;border-width:0 2px 2px 0} }
+  /* ===== POSTERS ===== */
+  .e-poster{
+    flex:none;position:relative;width:69px;height:104px;border-radius:var(--r-xs);overflow:hidden;
+    margin-top:1px;background:#150a1a;
+    box-shadow:0 0 0 1px rgba(var(--rim),var(--rim-2)), 0 6px 14px rgba(0,0,0,.5);
+  }
+  .e-poster img{
+    position:absolute;inset:0;width:100%;height:100%;display:block;z-index:1;
+    object-fit:cover;object-position:center center;
+    background:linear-gradient(165deg,#1a0e21 0%,#0c060f 100%);
+  }
+  /* ===== COMPOSED ONE-SHEET =====
+     For titles with no portrait poster in existence. The official logo sits on
+     a themed field that fills the whole tile, so there is no dead space at the
+     top or bottom and nothing gets cropped. --pt is the per-title accent. */
+  .e-poster.composed{background:#0c0510}
+  .pwash{
+    position:absolute;inset:0;z-index:1;
+    background:
+      radial-gradient(120% 78% at 50% 4%, color-mix(in srgb, var(--pt) 72%, #fff 6%), transparent 68%),
+      radial-gradient(150% 100% at 50% 108%, rgba(0,0,0,.92), transparent 62%),
+      linear-gradient(168deg, color-mix(in srgb, var(--pt) 58%, #000) 0%,
+                              color-mix(in srgb, var(--pt) 22%, #000) 52%,
+                              #0c0510 100%);
+  }
+  /* a faint sheen so the field is not flat */
+  .pwash::after{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(122deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 38%),
+               radial-gradient(90% 40% at 50% 100%, rgba(255,255,255,.10), transparent 70%);
+  }
+  .e-poster.composed .plogo{
+    position:absolute;left:5%;right:5%;top:50%;transform:translateY(-58%);
+    width:90%;height:auto;max-height:66%;object-fit:contain;z-index:2;
+    /* these are JPEGs with their own dark plate; screen drops the black out so
+       only the artwork sits on the themed field */
+    mix-blend-mode:screen;
+    filter:brightness(1.5) contrast(1.15) saturate(1.1)
+           drop-shadow(0 1px 5px rgba(0,0,0,.7));
+  }
+  .pyear{
+    position:absolute;left:0;right:0;bottom:7px;z-index:3;text-align:center;
+    font-family:var(--mono);font-size:8.5px;letter-spacing:.22em;
+    color:rgba(255,255,255,.82);text-shadow:0 1px 4px rgba(0,0,0,.9);
+  }
+  .e-poster.composed::after{
+    content:'';position:absolute;inset:0;z-index:4;pointer-events:none;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.14), inset 0 -22px 26px -20px rgba(0,0,0,.8);
+  }
+  @media (max-width:640px){ .pyear{font-size:7.5px;bottom:5px} }
+
+  /* the fan-made card, uncovered when no poster loads */
+  .pfall{
+    position:absolute;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;padding:4px 3px;
+    background:
+      radial-gradient(120% 70% at 50% 0%, rgba(180,140,255,.20), rgba(0,0,0,0) 70%),
+      linear-gradient(165deg,#281634 0%,#150a1a 55%,#0a050d 100%);
+    border-top:2px solid rgba(180,140,255,.5);
+  }
+  .pfall b{font-family:var(--serif);font-size:25px;line-height:1;color:var(--acc-lt);
+    letter-spacing:.02em;text-shadow:0 0 10px rgba(180,140,255,.5)}
+  .pfall i{font-style:normal;font-family:var(--sans);font-size:8px;line-height:1.3;
+    color:var(--ink-dim);margin-top:5px;max-height:34px;overflow:hidden;
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+  .pfall u{text-decoration:none;font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;
+    color:var(--ink-faint);margin-top:3px}
+  
+  @media (max-width:640px){ .e-poster{width:60px;height:90px} .pfall b{font-size:21px} .pfall i{font-size:7px} }
+
+  .e-body{flex:1;min-width:0;cursor:pointer;border-radius:var(--r-xs);
+    transition:opacity var(--t-mid) var(--e-out)}
+  .e-body:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+  .e-line1{display:flex;gap:9px;align-items:baseline;flex-wrap:wrap}
+  .e-no{font-family:var(--mono);font-size:11px;color:var(--ink-faint);flex:none}
+  .e-title{font-size:16.5px;font-weight:600;color:var(--ink)}
+  .e-year{font-family:var(--mono);font-size:12px;color:var(--ink-faint)}
+  .e-line2{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:7px}
+  .tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
+    border-radius:5px;padding:3px 7px;border:1px solid var(--edge-hot);color:var(--ink-faint)}
+  /* kind and runtime already say what they are in words. Only priority
+     gets a colour, so the eye lands on Essential instead of a rainbow. */
+  .tag.film,.tag.series,.tag.special,.tag.short{color:var(--ink-dim);border-color:var(--edge)}
+  .tag.ess{color:var(--acc);border-color:#34234d;background:rgba(180,140,255,.08)}
+  .tag.rec{color:var(--doom);border-color:#372243}
+  .tag.opt{color:var(--ink-faint)}
+  /* a placement, not a label - dashed says "approximate" */
+  .tag.tl{border-style:dashed}
+  .tag.soon{color:var(--crimson);border-color:rgba(var(--crimson-rgb),.32);
+    background:rgba(var(--crimson-rgb),.08)}
+  .tag.run{color:var(--ink-faint);border-color:var(--edge)}
+  .e-caret{flex:none;color:var(--ink-faint);font-size:12px;margin-top:5px;
+    transition:transform var(--t-mid) var(--e-out),opacity var(--t-mid) var(--e-out);
+    font-family:var(--mono);cursor:pointer}
+  .entry.open .e-caret{transform:rotate(90deg)}
+
+  .detail{display:none;margin:12px 0 4px;padding:14px 16px;border-radius:11px;
+    background:rgba(255,255,255,.022);border:1px solid var(--edge);font-size:14.5px;color:var(--ink-dim)}
+  .entry.open .detail{display:block}
+  .detail .why{color:var(--ink);margin-bottom:12px}
+  .detail .why b{color:var(--acc-lt);font-family:var(--mono);font-size:10px;letter-spacing:.22em;
+    text-transform:uppercase;display:block;margin-bottom:4px}
+  .dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:12px}
+  .dgrid div{border-top:1px solid var(--edge);padding-top:7px}
+  .dgrid span{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.2em;
+    color:var(--ink-faint);text-transform:uppercase}
+  .dgrid em{font-style:normal;color:var(--ink);font-size:14px}
+  .dsub{margin-top:13px;border-top:1px solid var(--edge);padding-top:10px}
+  .dsub span{font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--ink-faint);
+    text-transform:uppercase;display:block;margin-bottom:4px}
+  .dnote{margin-top:11px;color:var(--acc-lt);font-size:13.5px}
+
+  .stop{
+    display:flex;gap:11px;align-items:flex-start;
+    border:1px solid rgba(var(--crimson-rgb),.26);border-left:3px solid var(--crimson);
+    background:rgba(var(--crimson-rgb),.07);border-radius:11px;padding:12px 15px;margin:4px 0 13px;
+    font-size:14.5px;color:#f0c9c5;
+  }
+  .stop b{font-family:var(--mono);font-size:10px;letter-spacing:.24em;color:var(--crimson);
+    text-transform:uppercase;display:block;margin-bottom:3px}
+  .stop .ico{flex:none;font-size:15px;line-height:1.4}
+  .stop.info{border-color:#34234d;border-left-color:var(--acc);
+    background:rgba(180,140,255,.07);color:var(--acc-lt)}
+  .stop.info b{color:var(--acc)}
+
+  /* ============ GENERIC CARDS ============ */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:12px}
+  .card{border-radius:var(--r-md);padding:16px}
+  .card .card-h{font-family:var(--serif);font-size:18.5px;color:var(--ink);margin-bottom:7px}
+  .card p{font-size:14.5px;color:var(--ink-dim)}
+  /* a full-width card is a full-width box with a readable column of text
+     inside it — the grid cards are already narrower than the measure */
+  .card.wide p{max-width:var(--measure)}
+  .card p + p{margin-top:8px}
+  .card .why-not{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--ink-faint);margin-bottom:8px}
+  .card .when{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--doom);margin-bottom:8px}
+  .card.wide{grid-column:1/-1}
+
+  details.faq{border-radius:var(--r-md);padding:12px 18px;margin-bottom:9px}
+
+  /* ===== CAST GUIDE ===== */
+  .cast-count{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--ink-faint);
+    text-transform:uppercase;margin:0 0 16px}
+  .cast-group summary em{font-style:normal;font-family:var(--mono);font-size:10.5px;
+    letter-spacing:.16em;color:var(--ink-faint)}
+  .cast-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:12px;margin-top:14px}
+  .cast-card{border:1px solid rgba(180,140,255,.16);border-radius:var(--r-md);padding:16px;
+    background:linear-gradient(165deg,rgba(35,20,44,.35),rgba(11,5,14,.30))}
+  .cast-card .card-h{font-family:var(--serif);font-size:17.5px;color:var(--ink);margin-bottom:3px}
+  .cast-card p{font-size:14px;color:var(--ink-dim);margin-top:8px}
+  .cast-actor{font-size:14px !important;color:var(--acc-lt) !important;margin-top:1px !important;font-weight:600}
+  .cast-tag{font-family:var(--mono);font-size:9px !important;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink-faint) !important;margin-top:6px !important}
+  .cast-watch{font-size:12.5px !important;color:var(--ink-faint) !important;
+    border-top:1px solid rgba(180,140,255,.14);padding-top:8px;margin-top:10px !important}
+  .cast-watch b{color:var(--ink-dim)}
+  @media (max-width:640px){ .cast-grid{grid-template-columns:1fr} }
+
+  /* these are headings, so they take the heading face like every other one */
+  details.faq summary{cursor:pointer;font-family:var(--serif);font-weight:700;font-size:18px;
+    color:var(--ink);line-height:1.25;list-style:none;padding:3px 0;
+    transition:color var(--t-fast) var(--e-out)}
+  details.faq summary::-webkit-details-marker{display:none}
+  details.faq summary:hover{color:var(--acc-lt)}
+  details.faq summary::before{content:'+ ';color:var(--acc);font-family:var(--mono)}
+  details.faq[open] summary::before{content:'– '}
+  details.faq p{margin-top:11px;color:var(--ink-dim);font-size:14.5px;max-width:var(--measure)}
+  details.faq p + p{margin-top:9px}
+  details.faq ul{margin:10px 0 0 20px;color:var(--ink-dim);font-size:14.5px;max-width:var(--measure)}
+  details.faq li{margin-bottom:5px}
+
+  .dest{border:1px solid #34234d;border-radius:var(--r-lg);
+    background:linear-gradient(180deg,rgba(180,140,255,.1),rgba(180,140,255,.02));
+    padding:34px 26px;text-align:center}
+  .dest .no{font-family:var(--mono);font-size:11px;letter-spacing:.36em;color:var(--acc);text-transform:uppercase}
+  .dest h3{font-family:var(--serif);font-size:clamp(28px,6.4vw,52px);line-height:1.15;color:var(--acc-lt);margin:12px 0 8px;
+    text-shadow:0 0 30px var(--acc-glow)}
+  .dest p{color:var(--ink-dim);max-width:580px;margin:0 auto;font-size:15.5px}
+  .dest .date{font-family:var(--mono);font-size:12.5px;letter-spacing:.24em;color:var(--ink);
+    text-transform:uppercase;margin-top:16px}
+  /* Secret Wars — same tile language as Doomsday, its own accent,
+     held back by a deliberate stretch of empty road */
+  .sw-gap{height:52vh;min-height:300px;position:relative}
+  .sw-gap::after{content:'';position:absolute;left:50%;top:12%;bottom:6%;width:1px;
+    background:linear-gradient(180deg,transparent,var(--edge-hot) 30%,rgba(169,140,240,.5));}
+  .sw-card{border:1px solid #33305c;border-radius:var(--r-lg);
+    background:linear-gradient(180deg,rgba(169,140,240,.11),rgba(148,102,200,.03));
+    padding:34px 26px;text-align:center}
+  .sw-card .no{font-family:var(--mono);font-size:11px;letter-spacing:.36em;color:var(--violet);text-transform:uppercase}
+  .sw-card h3{font-family:var(--serif);font-size:clamp(28px,6.4vw,52px);line-height:1.15;color:#cdb8ff;margin:12px 0 8px;
+    text-shadow:0 0 30px rgba(169,140,240,.45)}
+  .sw-card > p{color:var(--ink-dim);max-width:600px;margin:0 auto;font-size:15.5px}
+  .sw-card .countdown{margin-top:26px}
+  .countdown.sw .tile{background:linear-gradient(180deg,rgba(169,140,240,.1),rgba(169,140,240,.015));
+    border-color:#2c2a4d}
+  .countdown.sw .tile b{color:#cdb8ff;text-shadow:0 0 22px rgba(169,140,240,.45)}
+  .sw-card .date{font-family:var(--mono);font-size:12.5px;letter-spacing:.24em;color:var(--ink);
+    text-transform:uppercase;margin-top:20px}
+  .sw-card .gap{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;color:var(--ink-faint);
+    text-transform:uppercase;margin-top:10px}
+
+  /* ===== TRAILERS ===== */
+  .tr-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(238px,1fr));gap:12px}
+  .tr-card{display:block;position:relative;padding:11px;border-radius:var(--r-md);text-decoration:none;
+    transition:transform var(--t-fast) var(--e-out), box-shadow var(--t-fast) var(--e-out)}
+  .tr-card:hover{transform:translateY(-3px);
+    box-shadow:0 0 0 1px rgba(180,140,255,.4), 0 16px 34px rgba(0,0,0,.5)}
+  .tr-card:active{transform:translateY(-1px)}
+  .tr-card:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+  .tr-thumb{position:relative;display:block;border-radius:10px;overflow:hidden;
+    aspect-ratio:16/9;background:#110815;margin-bottom:11px}
+  .tr-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .tr-play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:42px;height:42px;border-radius:50%;background:rgba(8,3,10,.72);
+    border:1.5px solid rgba(244,226,255,.7);backdrop-filter:blur(2px);
+    transition:background-color var(--t-fast) var(--e-out),border-color var(--t-fast) var(--e-out)}
+  .tr-play::after{content:'';position:absolute;left:16px;top:12px;
+    border-left:14px solid rgba(249,240,255,.95);
+    border-top:9px solid transparent;border-bottom:9px solid transparent;
+    transition:border-left-color var(--t-fast) var(--e-out)}
+  .tr-card:hover .tr-play{background:var(--acc);border-color:var(--acc)}
+  .tr-card:hover .tr-play::after{border-left-color:#0e0414}
+  .tr-kind{position:absolute;top:20px;left:20px;z-index:2;
+    font-family:var(--mono);font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;
+    padding:4px 9px;border-radius:99px;background:rgba(8,3,10,.8);color:var(--ink-dim);
+    border:1px solid rgba(var(--rim),var(--rim-3))}
+  .tr-card.special .tr-kind{background:rgba(180,140,255,.9);color:#0e0414;border-color:transparent}
+  .tr-card.trailer .tr-kind{color:var(--acc-lt);border-color:rgba(180,140,255,.5)}
+  .tr-card .card-h{font-family:var(--serif);font-size:17.5px;color:var(--ink);margin:0 0 4px}
+  .tr-date{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--doom)}
+  .tr-note{display:block;font-size:13.5px;color:var(--ink-dim);margin-top:7px;line-height:1.55}
+  /* ===== NOSTALGIA ===== */
+  /* warmer than the trailer cards: these look back, those look forward */
+  .tr-card.nostalgia{
+    background:linear-gradient(160deg,rgba(56,42,22,.30),rgba(13,10,16,.42));
+    border:1px solid rgba(214,178,110,.20);
+  }
+  .tr-card.nostalgia:hover{box-shadow:0 0 0 1px rgba(224,190,122,.45), 0 16px 34px rgba(0,0,0,.5)}
+  .tr-card.nostalgia .tr-kind{color:#e2c48a;border-color:rgba(214,178,110,.45)}
+  .tr-card.nostalgia .tr-date{color:#d9b877}
+  .tr-card.nostalgia .tr-thumb img,.tr-card.nostalgia .tr-stack img{
+    filter:sepia(.28) saturate(1.1) contrast(1.03);
+    transition:filter var(--t-mid) var(--e-out)}
+  .tr-card.nostalgia:hover .tr-thumb img,.tr-card.nostalgia:hover .tr-stack img{filter:none}
+  .tr-card.nostalgia:hover .tr-play{background:#e2c48a;border-color:#e2c48a}
+  .tr-card.nostalgia:hover .tr-play::after{border-left-color:#1a1206}
+
+  /* the playlist card stacks two thumbnails so it reads as a collection */
+  .tr-card.playlist{grid-column:1/-1}
+  .tr-stack{position:relative;display:block;aspect-ratio:16/7;border-radius:10px;
+    overflow:hidden;margin-bottom:11px;background:#0c0911}
+  .tr-stack img{position:absolute;top:0;height:100%;width:52%;object-fit:cover}
+  .tr-stack img:first-of-type{left:0;clip-path:polygon(0 0,100% 0,88% 100%,0 100%)}
+  .tr-stack img:nth-of-type(2){right:0;clip-path:polygon(12% 0,100% 0,100% 100%,0 100%)}
+  @media (max-width:640px){ .tr-grid{grid-template-columns:1fr} .tr-stack{aspect-ratio:16/9} }
+
+
+  section + .scroll-hint{margin-top:48px}
+  .scroll-hint{text-align:center;margin-top:26px;font-family:var(--mono);font-size:10.5px;
+    letter-spacing:.28em;color:var(--ink-faint);text-transform:uppercase}
+  .scroll-hint i{display:block;font-style:normal;font-size:18px;color:var(--doom);margin-top:8px;
+    animation:bob 2.4s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0);opacity:.6}50%{transform:translateY(6px);opacity:1}}
+
+  /* after-doomsday timeline */
+  .after{border-left:2px solid var(--edge-hot);margin-left:8px;padding-left:22px}
+  .aitem{position:relative;padding-bottom:26px}
+  .aitem::before{content:'';position:absolute;left:-29px;top:6px;width:12px;height:12px;border-radius:50%;
+    background:var(--bg);border:2px solid var(--doom)}
+  .aitem.unconfirmed::before{border-color:var(--ink-faint)}
+  .aitem .adate{font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;color:var(--doom);text-transform:uppercase}
+  .aitem.unconfirmed .adate{color:var(--ink-faint)}
+  .aitem .card-h{font-family:var(--serif);font-size:21px;color:var(--ink);margin:4px 0 5px}
+  .aitem p{font-size:14.5px;color:var(--ink-dim);max-width:720px}
+
+  footer{margin:80px 0 60px;padding-top:30px;border-top:1px solid var(--edge);
+    text-align:center;font-size:13.5px;color:var(--ink-faint);line-height:1.9}
+  footer b{color:var(--ink-dim)}
+
+  .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);z-index:99;
+    background:var(--card-2);border:1px solid var(--acc);color:var(--acc-lt);
+    padding:11px 20px;border-radius:99px;font-family:var(--mono);font-size:12px;letter-spacing:.1em;
+    opacity:0;pointer-events:none;
+    transition:opacity var(--t-mid) var(--e-out),transform var(--t-mid) var(--e-out)}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+
+  /* ===== PRINT ===== */
+  @media print{
+    #emblemWrap,#glowlayer,#vignette,#grain,.controls,.toast,.cd-switch,.scroll-hint,.sw-gap{display:none !important}
+    body{background:#fff;color:#000}
+    .page{position:static}
+    .glass{background:#fff !important;border:1px solid #bbb !important;box-shadow:none !important;
+      -webkit-backdrop-filter:none !important;backdrop-filter:none !important}
+    h1 .w,h1 .g,.sec-head h2,.part-head h3,.card-h,.dest h3,.sw-card h3{
+      color:#000 !important;-webkit-text-stroke:0 !important;text-shadow:none !important}
+    .tagline,.kicker,.card p,.part-head p,.sec-head p,.aitem p,.detail,.e-title,.e-year,footer{color:#111 !important}
+    .tag,.part-meta,.e-no,.stat span{color:#444 !important;border-color:#bbb !important}
+    .detail{display:block !important}
+    .entry{break-inside:avoid;page-break-inside:avoid}
+    .part{break-inside:auto}
+    a{color:#000;text-decoration:underline}
+  }
+
+  @media (max-width:640px){
+    :root{--row-text-x:84px}
+    .tile{min-width:74px;padding:12px 8px 9px}
+    .tile b{font-size:31px}
+    .controls{border-radius:var(--r-md);padding:11px}
+    .count-note{margin-left:0;width:100%}
+    .entry{padding:12px;gap:12px}
+    .after{padding-left:18px}
+  }
+
+  /* ===== REDUCED MOTION =====
+     One block, not seven. This covers every animation and every transition
+     on the page, including ones added later. 1ms rather than 0 is deliberate:
+     transitionend / animationend still fire, so nothing waiting on them hangs.
+     The smooth-scroll of the jump buttons is handled in app.js, which reads
+     the same media query. */
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{
+      animation-duration:1ms !important;animation-iteration-count:1 !important;
+      animation-delay:0ms !important;
+      transition-duration:1ms !important;transition-delay:0ms !important;
+      scroll-behavior:auto !important;
+    }
+    /* the live SVG is the fallback if the baked mark never loads; its dash
+       animation needs cancelling outright, a duration override is not enough */
+    #treeLit path{stroke-dasharray:none}
+  }
+
+  /* ============================================================
+     ROAD TO SECRET WARS — additions on top of the Doomsday system
+     ============================================================ */
+  /* BATTLEWORLD has eleven letters to PROTOCOL's eight */
+  h1 .g{gap:.34em}
+  h1 .g i:nth-child(9){animation-delay:.34s} h1 .g i:nth-child(10){animation-delay:.38s}
+  h1 .g i:nth-child(11){animation-delay:.42s}
+  @media (max-width:640px){ h1 .g{gap:.22em;font-size:clamp(13px,4.2vw,20px)} }
+
+  .tag.comic{color:var(--ink-dim);border-color:var(--edge)}
+
+  /* ===== DOME ONE-SHEET =====
+     Domes have no poster in existence. Each gets a designed sheet: its own
+     tinted sky, a dome sitting on the horizon, its number and its name. */
+  .e-poster.domep{background:#0a0612}
+  .dp-sky{position:absolute;inset:0;z-index:1;
+    background:
+      radial-gradient(120% 70% at 50% 0%, color-mix(in srgb, var(--pt) 70%, #fff 8%), transparent 70%),
+      radial-gradient(90% 46% at 50% 70%, color-mix(in srgb, var(--pt) 55%, #fff 20%), transparent 72%),
+      linear-gradient(176deg, color-mix(in srgb, var(--pt) 52%, #000) 0%,
+                              color-mix(in srgb, var(--pt) 20%, #000) 60%, #07030a 100%)}
+  .dp-dome{position:absolute;z-index:2;left:16%;right:16%;bottom:33%;aspect-ratio:2/1;
+    border:1.5px solid rgba(255,255,255,.72);border-bottom:0;border-radius:999px 999px 0 0;
+    background:radial-gradient(80% 120% at 50% 100%, color-mix(in srgb, var(--pt) 40%, #fff 45%), transparent 75%);
+    box-shadow:0 -2px 12px color-mix(in srgb, var(--pt) 60%, #fff 20%), inset 0 2px 8px rgba(255,255,255,.25)}
+  /* the horizon the dome sits on */
+  .dp-dome::after{content:'';position:absolute;left:-30%;right:-30%;bottom:-1px;height:1px;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent)}
+  /* the ribs of the dome */
+  .dp-dome::before{content:'';position:absolute;inset:18% 30% 0;border:1px solid rgba(255,255,255,.28);
+    border-bottom:0;border-radius:999px 999px 0 0}
+  .dp-n{position:absolute;z-index:3;top:6px;left:0;right:0;text-align:center;
+    font-family:var(--mono);font-size:8px;letter-spacing:.24em;color:rgba(255,255,255,.82);
+    text-shadow:0 1px 4px rgba(0,0,0,.9)}
+  .dp-name{position:absolute;z-index:3;left:3px;right:3px;bottom:7px;text-align:center;
+    font-family:var(--serif);font-size:10px;line-height:1.12;color:#fff;font-weight:700;
+    text-shadow:0 1px 5px rgba(0,0,0,.95);
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .domep::after{content:'';position:absolute;inset:0;z-index:4;pointer-events:none;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.14), inset 0 -26px 24px -18px rgba(0,0,0,.85)}
+  /* locked-in domes carry a lit rim along the top */
+  .domep.t-locked{box-shadow:0 0 0 1px rgba(var(--rim),var(--rim-2)), 0 -2px 0 0 var(--acc) inset, 0 6px 14px rgba(0,0,0,.5)}
+  @media (max-width:640px){ .dp-name{font-size:9px;bottom:5px} .dp-n{font-size:7px;top:5px} }
+
+  /* cross-links between titles and domes */
+  .golink{color:var(--acc);text-decoration:underline;text-decoration-color:rgba(180,140,255,.35);text-underline-offset:2px}
+  .golink:hover{text-decoration-color:var(--acc)}
+  .entry.flash{animation:flash 1.4s var(--e-out)}
+  @keyframes flash{0%{background:rgba(180,140,255,.22)}100%{background:transparent}}
+
+  /* the third progress card: Battleworld */
+  .bar.dome i{background:linear-gradient(90deg,#5a2ca8,var(--violet) 70%,#e6d8ff)}
+  #domes{margin-top:64px}
+  #domes .sec-head p + p{margin-top:10px}
+  .deepcuts{margin-top:22px}
+  .deepcuts .names{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+  .deepcuts .names span{font-family:var(--mono);font-size:11px;color:var(--ink-dim);
+    border:1px solid var(--edge-hot);border-radius:6px;padding:4px 9px}
+
+  /* the destination: the official Secret Wars wordmark, then the clock */
+  .dest-logo{display:block;width:min(460px,86%);height:auto;margin:18px auto 14px;
+    filter:drop-shadow(0 0 22px rgba(180,140,255,.45)) drop-shadow(0 4px 18px rgba(0,0,0,.8))}
+  .dest .countdown{margin-top:24px}
+  .dest .facts{margin:24px auto 0;max-width:640px;display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;text-align:left}
+  .dest .facts div{border:1px solid var(--edge-hot);border-radius:var(--r-xs);padding:10px 13px;background:rgba(7,3,8,.42)}
+  .dest .facts b{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--ink-faint);font-weight:400}
+  .dest .facts span{font-size:14.5px;color:var(--ink)}
+  .dest .dest-note{margin-top:20px;font-size:13.5px;color:var(--ink-faint);max-width:620px}
+  .dest .dest-note b{color:var(--ink-dim)}
+  @media (max-width:640px){
+    .dest{padding:28px 12px}
+    .dest .countdown{gap:6px;flex-wrap:nowrap}
+    .dest .countdown .tile{min-width:0;flex:1 1 0;padding-left:2px;padding-right:2px}
+    .dest .facts{grid-template-columns:repeat(2,1fr)}
+  }

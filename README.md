@@ -1,64 +1,54 @@
 # Road to Secret Wars
 
-A single-file fan site — Part II of the road that `roadtodoomsday.com` starts.
+Part two of [The Doomsday Protocol](https://claude28claude.github.io/whattowatchbeforedoomsday/):
+a fan-made road from *Avengers: Doomsday* (18 December 2026) to *Avengers: Secret Wars*
+(17 December 2027).
 
-**What it covers:** the 364 days between *Avengers: Doomsday* (Dec 18, 2026) and
-*Avengers: Secret Wars* (Dec 17, 2027), the 41 domes of Battleworld, the laws that
-hold the planet together, and Marvel's announced Phase 7 slate on the other side.
+**Live:** https://claude28claude.github.io/road-to-secret-wars/
 
-## Running it
+Rebuilt on 16 November 2026 on the Doomsday Protocol's own engine and design, so the two
+sites read as one series: poster-as-checkbox rows, glass panels, the Avengers "A" fixed
+behind the page, progress bars, filters, search, save/load, installable offline app.
+Doomsday is green; this one is violet, because violet is what Doomsday already uses to
+mean Secret Wars.
 
-Just open `index.html` — no build, no dependencies, no network calls.
+## What is on it
 
-Or serve it:
+| Part | Contents |
+|---|---|
+| I — The Last Mile | Brand New Day, VisionQuest, Endgame Encore, Avengers: Doomsday (the spoiler gate) |
+| II — The Interregnum | The 2027 gap: Born Again S3, X-Men '97 S3, Beyond the Spider-Verse, the animation slate, and the 1984 and 2015 comics |
+| III — The Battleworld Rewatch | 23 titles the domes are built from, each linked to the domes it explains |
+| IV — The Domes | 22 dome dossiers with designed dome posters, graded Locked in / Strong case / Wildcard, plus the 19 deep cuts |
+| Laws, Destination, After | The 8 laws of Battleworld, the Secret Wars card with the official logo and a countdown, and the post-Secret Wars slate |
+
+## Files
+
+| file | contents |
+|---|---|
+| `index.html` | markup and prose |
+| `styles.css` | the Doomsday stylesheet, recoloured violet, plus dome-poster and destination styles |
+| `data.js` | `PARTS`, `DOMES`, `POSTERS`, `COMPOSED` — must load before `app.js` |
+| `app.js` | rendering, ticks, stats, countdowns, the Battleworld mark generator, PWA wiring |
+| `sw.js` / `manifest.webmanifest` | offline app — **bump `CACHE` in `sw.js` on every content change** |
+| `assets/` | the Avengers A glyph, the Secret Wars logo (SVG), app icons |
+
+## Rules that matter
+
+- Progress is saved per title id under `roadToSecretWars.v2`. Domes are stored as
+  `dome:<id>` because a dome and a film can share a name (Apocalypse). Ticks from the first
+  version of the site (`roadToSecretWars.watched.v1` / `.domes.v1`) are carried over once.
+- Never present a rumour as announced. Unreleased titles say "Not out yet" and say plainly
+  when a date or runtime is a placeholder.
+- Posters are hotlinked from Wikipedia; every URL was checked to serve an image.
+
+## Running it locally
 
 ```bash
-npx -y http-server "road-to-secret-wars" -p 8126 -c-1
+npx -y http-server road-to-secret-wars -p 8126 -c-1
 ```
 
-It's also registered in `.claude/launch.json` as `road-to-secret-wars` (port 8126).
+Registered in the workspace `.claude/launch.json` as `road-to-secret-wars`. A stale service
+worker will serve old files while testing — unregister it and clear caches first.
 
-## Sections
-
-| Part | What's in it |
-|---|---|
-| I — The Last Mile | The 3 stops still ahead of Doomsday: Brand New Day, VisionQuest, Doomsday |
-| II — The Interregnum | Every Marvel project announced inside the 2027 gap, tagged CONFIRMED / UNDATED / RUMORED |
-| III — The Domes | 22 detailed dome dossiers + the 19 deep cuts that complete the 41 |
-| IV — Laws of Battleworld | The 8 rules that make the planet work |
-| V — Secret Wars | The destination card: date, directors, cast, position in the saga |
-| VI — What Comes Next | Phase 7 / the Mutant Saga — X-Men, Black Panther 3, Ghost Rider, Blade |
-
-## How it works
-
-- **Progress saves on the device** via `localStorage`, under two keys:
-  `roadToSecretWars.watched.v1` (road items) and `roadToSecretWars.domes.v1` (domes briefed).
-- **Dual countdown** — toggle between Doomsday and Secret Wars. If Doomsday has already
-  passed when the page loads, it defaults to Secret Wars automatically.
-- **Dome filters** — All / Locked in / Strong case / Wildcard / Not yet briefed.
-- **The background emblem is hand-built SVG**, not an image file: Doom's mask as a
-  ghosted plate, with the Avengers "A" over it in gold, plus a crisp version of the
-  "A" as the hero mark. Being vector, it stays sharp at any size and adds nothing to
-  page weight. No copyrighted studio artwork is bundled or hotlinked.
-
-## Editing the content
-
-Everything lives in four arrays at the top of the `<script>` block in `index.html`:
-
-- `PARTS` — the checkable road (Parts I and II)
-- `DOMES` — the 22 dome dossiers, plus `DEEP_CUTS` for the remaining names
-- `LAWS` — the Battleworld rules
-- `NEXT` — the Phase 7 cards
-
-Add or edit an entry and it renders automatically.
-
-## Accuracy notes
-
-- Release dates are Marvel's **announced** dates. They move often.
-- Badges are honest about certainty: `CONFIRMED` means Marvel has said it,
-  `UNDATED` means announced but unscheduled, `RUMORED` means trade reporting only.
-- The dome dossiers are drawn from the 2015 *Secret Wars* comic (Hickman / Ribić).
-  The "MCU case" on each card is analysis, **not** a leak — the page says so in
-  Part III's intro and again in the footer.
-
-Not affiliated with Marvel Studios or The Walt Disney Company.
+Fan-made, non-commercial, not affiliated with Marvel Studios, Disney or Sony.

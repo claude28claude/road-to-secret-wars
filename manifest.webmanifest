@@ -1,0 +1,48 @@
+{
+  "name": "Road to Secret Wars",
+  "short_name": "Secret Wars",
+  "description": "The road from Avengers: Doomsday to Avengers: Secret Wars — the last mile, the gap year, a Battleworld rewatch and all 22 domes.",
+  "id": "/road-to-secret-wars/",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui", "browser"],
+  "orientation": "any",
+  "background_color": "#070308",
+  "theme_color": "#070308",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["entertainment", "utilities", "lifestyle"],
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Jump to the road",
+      "short_name": "The list",
+      "url": "./#listZone"
+    },
+    {
+      "name": "The domes of Battleworld",
+      "short_name": "Domes",
+      "url": "./#domes"
+    }
+  ]
+}
