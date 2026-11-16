@@ -7,7 +7,7 @@
  *   same-origin      cache first (the shell and icons never change in place)
  *   Wikipedia art    stale-while-revalidate, opaque responses cached as-is
  */
-const CACHE = 'road-to-secret-wars-v2';
+const CACHE = 'road-to-secret-wars-v3';
 const POSTERS = 'secretwars-posters-v1';
 
 const SHELL = [

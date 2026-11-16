@@ -823,4 +823,95 @@ document.getElementById('topTally').textContent=
   CORE.length+' titles · '+DOMES.length+' domes · ~'+hrs(CORE.reduce(function(s,i){return s+i.run;},0))+'h';
 
 render();
+
+/* ============================================================
+   PART ONE, ABOVE THE PAGE
+   The Doomsday Protocol sits in a full-screen frame directly above this
+   page. Opening it and scrolling down by its height happen in the same
+   frame, so nobody ever sees it on load: the page opens on Secret Wars,
+   and scrolling up past the top arrives at the END of Doomsday (that page
+   jumps to its own bottom when it sees ?embed=sw), from where you can keep
+   scrolling up through all of it.
+   ============================================================ */
+(function partOne(){
+  var wrap=document.getElementById('partOne');
+  var back=document.getElementById('p1Back');
+  var hint=document.getElementById('p1Hint');
+  if(!wrap) return;
+  var LOCAL=/^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+  var SRC=(LOCAL?'http://'+location.hostname+':8127/':'https://claude28claude.github.io/whattowatchbeforedoomsday/')+'?embed=sw';
+  var ORIGIN=new URL(SRC).origin;
+
+  function jump(y){                // instant, whatever html's scroll-behavior says
+    var el=document.documentElement, was=el.style.scrollBehavior;
+    el.style.scrollBehavior='auto'; window.scrollTo(0,y); el.style.scrollBehavior=was;
+  }
+
+  // open it, and move the view down by exactly its height in the same frame
+  var y0=window.scrollY;
+  wrap.classList.add('on');
+  var H=wrap.offsetHeight;
+  jump(y0+H);
+
+  // keep the reader where they were if the frame changes height
+  if(window.ResizeObserver) new ResizeObserver(function(){
+    var nh=wrap.offsetHeight; if(nh===H) return;
+    var inPage=window.scrollY>=H-1, delta=nh-H; H=nh;
+    if(inPage) jump(window.scrollY+delta);
+  }).observe(wrap);
+
+  // load Doomsday once this page is settled, or straight away if someone heads up
+  var frame=null;
+  function load(){
+    if(frame) return;
+    frame=document.createElement('iframe');
+    frame.title='Part one: The Doomsday Protocol';
+    frame.src=SRC;
+    frame.addEventListener('load',function(){ var w=document.getElementById('p1Wait'); if(w) w.remove(); });
+    wrap.appendChild(frame);
+  }
+  addEventListener('load',function(){ setTimeout(load,1200); });
+
+  function goUp(){ load(); scrollTo({top:0,behavior:sb()}); }
+  function goDown(){ snapping=true; target=H; scrollTo({top:H,behavior:sb()}); setTimeout(function(){snapping=false;},1200); }
+  if(hint) hint.addEventListener('click',goUp);
+  if(back) back.addEventListener('click',goDown);
+  // links to the Doomsday Protocol on this page scroll up to it instead
+  document.querySelectorAll('a[href*="whattowatchbeforedoomsday"]').forEach(function(a){
+    a.addEventListener('click',function(e){
+      if(e.ctrlKey||e.metaKey||e.shiftKey||e.button!==0) return;   // new-tab clicks still open the real site
+      e.preventDefault(); goUp();
+    });
+  });
+  // Doomsday's own "Part two" link, from inside the frame
+  addEventListener('message',function(e){
+    if(!frame || e.source!==frame.contentWindow || e.origin!==ORIGIN) return;
+    if(e.data && e.data.rtsw==='part-two') goDown();
+  });
+
+  /* Never leave the reader half in one site and half in the other: when
+     scrolling stops in the seam, finish the move in the direction they were
+     going. A small nudge (under 60px) springs back. */
+  var lastY=window.scrollY, dir='down', timer=null, touching=false, snapping=false, target=0;
+  function settle(){
+    if(snapping||touching) return;
+    var y=window.scrollY;
+    if(y<=1 || y>=H-1) return;
+    target = dir==='up' ? (H-y>60 ? 0 : H) : (y>60 ? H : 0);
+    snapping=true;
+    scrollTo({top:target,behavior:sb()});
+    setTimeout(function(){ snapping=false; },1200);
+  }
+  addEventListener('scroll',function(){
+    var y=window.scrollY;
+    if(y!==lastY) dir = y<lastY ? 'up' : 'down';
+    lastY=y;
+    if(y<H+500) load();
+    if(back) back.hidden = y>H*0.5;
+    if(snapping && Math.abs(y-target)<2) snapping=false;
+    clearTimeout(timer); timer=setTimeout(settle,160);
+  },{passive:true});
+  addEventListener('touchstart',function(){ touching=true; },{passive:true});
+  addEventListener('touchend',function(){ touching=false; clearTimeout(timer); timer=setTimeout(settle,160); },{passive:true});
+})();
 })();

@@ -972,3 +972,29 @@
     .dest .countdown .tile{min-width:0;flex:1 1 0;padding-left:2px;padding-right:2px}
     .dest .facts{grid-template-columns:repeat(2,1fr)}
   }
+
+  /* ===== PART ONE ABOVE THE PAGE =====
+     The Doomsday Protocol sits in a full-screen frame directly above Secret
+     Wars. Height 0 until app.js opens it (and scrolls down by the same amount
+     in the same frame), so the page always opens on Secret Wars. */
+  #partOne{position:relative;z-index:3;height:0;margin:0;overflow:hidden;background:#030806}
+  #partOne.on{height:100vh;height:100svh}
+  #partOne iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;background:#030806}
+  .p1-wait{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+    font-family:var(--mono);font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:#8ede4d}
+  .p1-wait i{font-style:normal;letter-spacing:.2em;color:#7d9c88;font-size:11px}
+  /* where part one ends and part two begins */
+  #partOne::after{content:'';position:absolute;left:0;right:0;bottom:0;height:2px;z-index:2;pointer-events:none;
+    background:linear-gradient(90deg,transparent,#8ede4d 25%,var(--acc) 75%,transparent);opacity:.7}
+  .p1-hint{display:block;margin:0 auto;padding:12px 16px 2px;background:none;border:0;cursor:pointer;
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);
+    transition:color var(--t-fast) var(--e-out)}
+  .p1-hint:hover{color:var(--acc)}
+  .p1-back{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:60;cursor:pointer;
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+    color:#f1e8ff;background:rgba(40,22,62,.92);border:1px solid rgba(180,140,255,.55);border-radius:99px;
+    padding:10px 18px;box-shadow:0 8px 24px rgba(0,0,0,.6),0 0 18px rgba(180,140,255,.25);
+    backdrop-filter:blur(8px)}
+  .p1-back:hover{background:rgba(60,34,92,.95)}
+  .p1-back[hidden]{display:none}
+  @media print{ #partOne,.p1-back,.p1-hint{display:none !important} }
