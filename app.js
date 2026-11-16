@@ -838,6 +838,20 @@ render();
   var back=document.getElementById('p1Back');
   var hint=document.getElementById('p1Hint');
   if(!wrap) return;
+
+  /* Shown inside the Doomsday Protocol (it frames this page below its own,
+     ?embed=dd): never put Doomsday above again, and let the "part one"
+     controls hand back to the page around us instead. */
+  if(window.parent!==window){
+    wrap.remove(); if(back) back.remove();
+    function up(e){ if(e) e.preventDefault(); window.parent.postMessage({rtsw:'part-one'},'*'); }
+    if(hint){ hint.innerHTML='&#9650; Part one &middot; The Doomsday Protocol is just above'; hint.addEventListener('click',up); }
+    document.querySelectorAll('a[href*="whattowatchbeforedoomsday"]').forEach(function(a){
+      a.removeAttribute('target'); a.addEventListener('click',up);
+    });
+    return;
+  }
+
   var LOCAL=/^(localhost|127\.0\.0\.1)$/.test(location.hostname);
   var SRC=(LOCAL?'http://'+location.hostname+':8127/':'https://claude28claude.github.io/whattowatchbeforedoomsday/')+'?embed=sw';
   var ORIGIN=new URL(SRC).origin;
@@ -884,8 +898,16 @@ render();
   }
   addEventListener('load',function(){ setTimeout(load,1200); });
 
-  function goUp(){ load(); scrollTo({top:0,behavior:sb()}); }
-  function goDown(){ snapping=true; target=H; scrollTo({top:H,behavior:sb()}); setTimeout(function(){snapping=false;},1200); }
+  /* an automatic move runs until it arrives, the reader takes over (wheel,
+     touch, keys), or the browser says scrolling ended - never on a short
+     timer, which cut moves off half way on slow devices */
+  var snapT=null;
+  function go(y){ snapping=true; target=y; clearTimeout(snapT); snapT=setTimeout(function(){ snapping=false; },4000);
+    scrollTo({top:y,behavior:sb()}); }
+  function goUp(){ load(); go(0); }
+  function goDown(){ go(H); }
+  ['wheel','touchstart','keydown'].forEach(function(ev){ addEventListener(ev,function(){ snapping=false; },{passive:true}); });
+  addEventListener('scrollend',function(){ if(snapping && Math.abs(window.scrollY-target)<2) snapping=false; });
   if(hint) hint.addEventListener('click',goUp);
   if(back) back.addEventListener('click',goDown);
   // links to the Doomsday Protocol on this page scroll up to it instead
@@ -909,10 +931,7 @@ render();
     if(snapping||touching) return;
     var y=window.scrollY;
     if(y<=1 || y>=H-1) return;
-    target = dir==='up' ? (H-y>60 ? 0 : H) : (y>60 ? H : 0);
-    snapping=true;
-    scrollTo({top:target,behavior:sb()});
-    setTimeout(function(){ snapping=false; },1200);
+    go(dir==='up' ? (H-y>60 ? 0 : H) : (y>60 ? H : 0));
   }
   addEventListener('scroll',function(){
     var y=window.scrollY;
