@@ -835,6 +835,7 @@ render();
    ============================================================ */
 (function partOne(){
   var wrap=document.getElementById('partOne');
+  var seam=document.getElementById('seam');
   var back=document.getElementById('p1Back');
   var hint=document.getElementById('p1Hint');
   if(!wrap) return;
@@ -843,7 +844,7 @@ render();
      ?embed=dd): never put Doomsday above again, and let the "part one"
      controls hand back to the page around us instead. */
   if(window.parent!==window){
-    wrap.remove(); if(back) back.remove();
+    wrap.remove(); if(seam) seam.remove(); if(back) back.remove();
     function up(e){ if(e) e.preventDefault(); window.parent.postMessage({rtsw:'part-one'},'*'); }
     if(hint){ hint.innerHTML='&#9650; Part one &middot; The Doomsday Protocol is just above'; hint.addEventListener('click',up); }
     document.querySelectorAll('a[href*="whattowatchbeforedoomsday"]').forEach(function(a){
@@ -860,8 +861,12 @@ render();
     var el=document.documentElement, was=el.style.scrollBehavior;
     el.style.scrollBehavior='auto'; window.scrollTo(0,y); el.style.scrollBehavior=was;
   }
+  // H = the Doomsday frame, S = the liquid seam; Secret Wars starts at H+S
+  var H=0, S=0;
+  function measure(){ H=wrap.offsetHeight; S=seam?seam.offsetHeight:0; }
+  function start(){ return H+S; }
 
-  /* Open it and place the view in the same frame. The browser's own scroll
+  /* Open both and place the view in the same frame. The browser's own scroll
      restoration is switched off in <head>, because it would restore a
      position that already counted the frame before the frame exists. So
      this page remembers its own place, relative to the start of Secret Wars,
@@ -870,21 +875,27 @@ render();
   var nav=(performance.getEntriesByType && performance.getEntriesByType('navigation')[0]||{}).type;
   var saved=null;
   if(nav==='reload'||nav==='back_forward'){ try{ saved=sessionStorage.getItem(SPOT); }catch(e){} }
-  wrap.classList.add('on');
-  var H=wrap.offsetHeight;
+  wrap.classList.add('on'); if(seam) seam.classList.add('on');
+  measure();
   var anchor=location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
-  if(saved!==null && saved!=='' && !isNaN(+saved)) jump(Math.max(0,H+(+saved)));
+  if(saved!==null && saved!=='' && !isNaN(+saved)) jump(Math.max(0,start()+(+saved)));
   else if(anchor){ jump(0); jump(anchor.getBoundingClientRect().top); }
-  else jump(H);
-  function remember(){ try{ sessionStorage.setItem(SPOT,String(Math.round(window.scrollY-H))); }catch(e){} }
+  else jump(start());
+  function remember(){ try{ sessionStorage.setItem(SPOT,String(Math.round(window.scrollY-start()))); }catch(e){} }
   addEventListener('pagehide',remember);
 
-  // keep the reader where they were if the frame changes height
-  if(window.ResizeObserver) new ResizeObserver(function(){
-    var nh=wrap.offsetHeight; if(nh===H) return;
-    var inPage=window.scrollY>=H-1, delta=nh-H; H=nh;
-    if(inPage) jump(window.scrollY+delta);
-  }).observe(wrap);
+  // keep the reader where they were if the frame or the seam changes height
+  if(window.ResizeObserver){
+    var ro=new ResizeObserver(function(){
+      var before=start(), inPage=window.scrollY>=before-1;
+      measure();
+      if(inPage && start()!==before) jump(window.scrollY+start()-before);
+    });
+    ro.observe(wrap); if(seam) ro.observe(seam);
+  }
+
+  // the liquid itself
+  if(seam && window.SeamFluid){ try{ window.SeamFluid(seam); }catch(err){ seam.classList.add('no-fluid'); } }
 
   // load Doomsday once this page is settled, or straight away if someone heads up
   var frame=null;
@@ -893,7 +904,17 @@ render();
     frame=document.createElement('iframe');
     frame.title='Part one: The Doomsday Protocol';
     frame.src=SRC;
-    frame.addEventListener('load',function(){ var w=document.getElementById('p1Wait'); if(w) w.remove(); });
+    frame.addEventListener('load',function(){
+      var w=document.getElementById('p1Wait'); if(w) w.remove();
+      /* Same address on the live site, so the wheel can be caught inside the
+         frame: while the frame is only partly on screen, scrolling up over it
+         moves this page (to reveal the rest) instead of the page inside it. */
+      try{
+        frame.contentWindow.addEventListener('wheel',function(e){
+          if(e.deltaY<0 && window.scrollY>0){ e.preventDefault(); snapping=false; window.scrollBy(0,e.deltaY); }
+        },{passive:false});
+      }catch(err){ /* a different address (local testing): the browser keeps them apart */ }
+    });
     wrap.appendChild(frame);
   }
   addEventListener('load',function(){ setTimeout(load,1200); });
@@ -901,11 +922,11 @@ render();
   /* an automatic move runs until it arrives, the reader takes over (wheel,
      touch, keys), or the browser says scrolling ended - never on a short
      timer, which cut moves off half way on slow devices */
-  var snapT=null;
+  var snapT=null, snapping=false, target=0;
   function go(y){ snapping=true; target=y; clearTimeout(snapT); snapT=setTimeout(function(){ snapping=false; },4000);
     scrollTo({top:y,behavior:sb()}); }
   function goUp(){ load(); go(0); }
-  function goDown(){ go(H); }
+  function goDown(){ go(start()); }
   ['wheel','touchstart','keydown'].forEach(function(ev){ addEventListener(ev,function(){ snapping=false; },{passive:true}); });
   addEventListener('scrollend',function(){ if(snapping && Math.abs(window.scrollY-target)<2) snapping=false; });
   if(hint) hint.addEventListener('click',goUp);
@@ -923,21 +944,23 @@ render();
     if(e.data && e.data.rtsw==='part-two') goDown();
   });
 
-  /* Never leave the reader half in one site and half in the other: when
-     scrolling stops in the seam, finish the move in the direction they were
-     going. A small nudge (under 60px) springs back. */
-  var lastY=window.scrollY, dir='down', timer=null, touching=false, snapping=false, target=0;
+  /* Where scrolling stops decides what happens:
+     - the whole liquid seam on screen: stay - that is someone looking at it;
+     - otherwise, caught between the two sites: finish the move in the
+       direction they were going (a nudge under 60px springs back). */
+  var lastY=window.scrollY, dir='down', timer=null, touching=false;
   function settle(){
     if(snapping||touching) return;
-    var y=window.scrollY;
-    if(y<=1 || y>=H-1) return;
-    go(dir==='up' ? (H-y>60 ? 0 : H) : (y>60 ? H : 0));
+    var y=window.scrollY, vh=window.innerHeight, B=start();
+    if(y<=1 || y>=B-1) return;
+    if(S && y<=H && y+vh>=H+S) return;
+    go(dir==='up' ? (B-y>60 ? 0 : B) : (y>60 ? B : 0));
   }
   addEventListener('scroll',function(){
     var y=window.scrollY;
     if(y!==lastY) dir = y<lastY ? 'up' : 'down';
     lastY=y;
-    if(y<H+500) load();
+    if(y<start()+500) load();
     if(back) back.hidden = y>H*0.5;
     if(snapping && Math.abs(y-target)<2) snapping=false;
     clearTimeout(timer); timer=setTimeout(settle,160);

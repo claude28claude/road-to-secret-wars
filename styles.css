@@ -983,9 +983,6 @@
   .p1-wait{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
     font-family:var(--mono);font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:#8ede4d}
   .p1-wait i{font-style:normal;letter-spacing:.2em;color:#7d9c88;font-size:11px}
-  /* where part one ends and part two begins */
-  #partOne::after{content:'';position:absolute;left:0;right:0;bottom:0;height:2px;z-index:2;pointer-events:none;
-    background:linear-gradient(90deg,transparent,#8ede4d 25%,var(--acc) 75%,transparent);opacity:.7}
   .p1-hint{display:block;margin:0 auto;padding:12px 16px 2px;background:none;border:0;cursor:pointer;
     font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);
     transition:color var(--t-fast) var(--e-out)}
@@ -998,3 +995,22 @@
   .p1-back:hover{background:rgba(60,34,92,.95)}
   .p1-back[hidden]{display:none}
   @media print{ #partOne,.p1-back,.p1-hint{display:none !important} }
+
+  /* ===== THE SEAM =====
+     Where part one meets part two: a band of live liquid (fluid.js), green
+     pouring down from Doomsday, violet rising from Secret Wars, stirred by
+     the pointer. Height 0 until app.js opens it with the frame above. */
+  .seam{position:relative;z-index:3;height:0;overflow:hidden;cursor:crosshair;touch-action:pan-y;
+    background:linear-gradient(180deg,#030806 0%,#0c2a12 30%,#1d0f3a 70%,#070308 100%)}
+  .seam.on{height:clamp(180px,30vh,300px)}
+  .seam canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .seam-label{position:absolute;inset:0;z-index:2;pointer-events:none;display:flex;flex-direction:column;
+    justify-content:space-between;align-items:center;padding:12px 16px;
+    font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase}
+  .seam-label i{font-style:normal;opacity:.6;text-shadow:0 1px 6px rgba(0,0,0,.9)}
+  .seam-label i:first-child{color:#bff59a}
+  .seam-label i:last-child{color:#dccbff}
+  /* no WebGL: the gradient above simply drifts */
+  .seam.no-fluid{background-size:100% 220%;animation:seamDrift 9s ease-in-out infinite alternate}
+  @keyframes seamDrift{from{background-position:0 0}to{background-position:0 100%}}
+  @media print{ .seam{display:none !important} }
