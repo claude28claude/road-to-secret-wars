@@ -842,7 +842,7 @@ render();
   var host=document.getElementById('edgeFluid');
   if(!host) return;
   if(!window.EdgeLiquid){ host.classList.add('no-fluid'); return; }
-  try{ window.EdgeLiquid(host,{edge:'top',edgeColor:[0.55,0.87,0.30],ownColor:[0.70,0.55,1.00]}); }catch(err){ host.classList.add('no-fluid'); }
+  try{ window.EdgeLiquid(host,{edge:'top',edgeColor:[0.50,0.95,0.36],ownColor:[0.70,0.55,1.00]}); }catch(err){ host.classList.add('no-fluid'); }
 })();
 
 (function partOne(){
